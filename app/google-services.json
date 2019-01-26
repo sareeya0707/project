@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "482680453121",
+    "firebase_url": "https://deliverycoffeeshop-dev.firebaseio.com",
+    "project_id": "deliverycoffeeshop-dev",
+    "storage_bucket": "deliverycoffeeshop-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482680453121:android:89f3cbe7e897cfe3",
+        "android_client_info": {
+          "package_name": "com.csc48.deliverycoffeeshop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482680453121-n4e08kfs78ljj9b9u9k4kv5c8vnahsp6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDC18LTf8Hx07WwVXLDQ-cAVKE1nO9_0BM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
