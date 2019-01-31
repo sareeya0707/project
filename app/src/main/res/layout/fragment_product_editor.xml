@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:gravity="center"
+              android:padding="16dp">
+
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp">
+
+        <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                app:srcCompat="@drawable/ic_close"
+                android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp">
+
+        <ImageView
+                android:id="@+id/imvProductImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
+                android:minWidth="200dp"
+                android:scaleType="centerCrop"
+                android:background="@android:color/darker_gray"/>
+
+        <TextView
+                android:id="@+id/btnChooseImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:background="#9C000000"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:layout_alignBottom="@+id/imvProductImage"
+                android:text="เลือกรูปภาพ"/>
+    </RelativeLayout>
+
+    <android.support.design.widget.TextInputLayout
+            android:id="@+id/layoutProductName"
+            style="@style/Widget.TextInputLayout"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:hint="ชื่อสินค้า"
+            android:focusableInTouchMode="true"
+            app:errorEnabled="true">
+
+        <android.support.design.widget.TextInputEditText
+                android:id="@+id/edtProductName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:background="@drawable/input_field_background"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+            android:id="@+id/layoutProductPrice"
+            style="@style/Widget.TextInputLayout"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:hint="ราคา"
+            android:focusableInTouchMode="true"
+            app:errorEnabled="true">
+
+        <android.support.design.widget.TextInputEditText
+                android:id="@+id/edtProductPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:background="@drawable/input_field_background"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+            android:id="@+id/btnSaveProduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="เพิ่มสินค้า"/>
+
+</LinearLayout>

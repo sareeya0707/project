@@ -2,10 +2,7 @@ package com.csc48.deliverycoffeeshop.di.module
 
 import android.arch.lifecycle.ViewModel
 import com.csc48.deliverycoffeeshop.di.ViewModelKey
-import com.csc48.deliverycoffeeshop.viewmodel.LoginViewModel
-import com.csc48.deliverycoffeeshop.viewmodel.MainAdminViewModel
-import com.csc48.deliverycoffeeshop.viewmodel.MainCustomerViewModel
-import com.csc48.deliverycoffeeshop.viewmodel.UserInfoViewModel
+import com.csc48.deliverycoffeeshop.viewmodel.*
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -31,4 +28,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UserInfoViewModel::class)
     abstract fun bindUserInfoViewModel(userInfoViewModel: UserInfoViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ProductManagementViewModel::class)
+    abstract fun bindProductManagementViewModel(productManagementViewModel: ProductManagementViewModel): ViewModel
 }

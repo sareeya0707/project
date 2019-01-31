@@ -1,9 +1,6 @@
 package com.csc48.deliverycoffeeshop.di.module
 
-import com.csc48.deliverycoffeeshop.ui.LoginActivity
-import com.csc48.deliverycoffeeshop.ui.MainAdminActivity
-import com.csc48.deliverycoffeeshop.ui.MainCustomerActivity
-import com.csc48.deliverycoffeeshop.ui.UserInfoActivity
+import com.csc48.deliverycoffeeshop.ui.*
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -20,4 +17,7 @@ abstract class ActivityModule {
 
     @ContributesAndroidInjector()
     abstract fun contributeUserInfoActivity(): UserInfoActivity
+
+    @ContributesAndroidInjector()
+    abstract fun contributeProductManagementActivity(): ProductManagementActivity
 }

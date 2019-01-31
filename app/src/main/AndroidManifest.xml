@@ -14,6 +14,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".ui.ProductManagementActivity">
+        </activity>
         <activity android:name=".ui.MainAdminActivity">
         </activity>
         <activity android:name=".ui.UserInfoActivity">
@@ -25,7 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MainCustomerActivity"></activity>
+        <activity android:name=".ui.MainCustomerActivity"/>
     </application>
 
 </manifest>
