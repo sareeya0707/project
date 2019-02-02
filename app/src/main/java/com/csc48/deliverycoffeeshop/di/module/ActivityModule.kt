@@ -20,4 +20,13 @@ abstract class ActivityModule {
 
     @ContributesAndroidInjector()
     abstract fun contributeProductManagementActivity(): ProductManagementActivity
+
+    @ContributesAndroidInjector()
+    abstract fun contributeOrderManagementActivity(): OrderManagementActivity
+
+    @ContributesAndroidInjector()
+    abstract fun contributeOrderDetailCustomerActivity(): OrderDetailCustomerActivity
+
+    @ContributesAndroidInjector()
+    abstract fun contributeOrderDetailAdminActivity(): OrderDetailAdminActivity
 }

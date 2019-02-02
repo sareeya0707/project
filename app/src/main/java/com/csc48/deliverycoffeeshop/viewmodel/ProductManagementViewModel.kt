@@ -1,11 +1,10 @@
 package com.csc48.deliverycoffeeshop.viewmodel
 
-import android.app.Activity
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
-import android.widget.Toast
 import com.csc48.deliverycoffeeshop.model.ProductModel
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,6 +20,7 @@ class ProductManagementViewModel @Inject constructor() : ViewModel() {
     private val storage = FirebaseStorage.getInstance()
 
     val products = MutableLiveData<List<ProductModel>>()
+    val response = MutableLiveData<Task<Void>>()
 
     fun getProducts() {
         val ref = database.reference.child("products")
@@ -46,14 +46,28 @@ class ProductManagementViewModel @Inject constructor() : ViewModel() {
         })
     }
 
-    fun uploadProductImage(activity: Activity?, byteArray: ByteArray) {
-        val storageReference = storage.reference.child("products")//.child(uid + ".jpg")
-        val uploadTask = storageReference.putBytes(byteArray)
-        uploadTask.addOnFailureListener { exception ->
-            Toast.makeText(activity, "อัพโหลดผิดพลาด", Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "storageReference exception: " + exception.message)
-        }.addOnSuccessListener { taskSnapshot ->
-            storageReference.downloadUrl
+    fun updateProduct(productModel: ProductModel, byteArray: ByteArray?) {
+        response.value = null
+        val ref = database.reference.child("products")
+        val pid = if (productModel.key != null) productModel.key else ref.push().key
+        if (pid != null) {
+            ref.child(pid).setValue(productModel).addOnCompleteListener { task ->
+                if (task.isSuccessful && byteArray != null) uploadProductImage(pid, byteArray)
+                response.value = task
+            }
         }
     }
+
+    private fun uploadProductImage(productID: String, byteArray: ByteArray) {
+        val databaseReference = database.reference.child("products").child(productID)
+        val storageReference = storage.reference.child("products").child("$productID.jpg")
+        val uploadTask = storageReference.putBytes(byteArray)
+        uploadTask.addOnSuccessListener {
+            storageReference.downloadUrl.addOnSuccessListener { uri ->
+                databaseReference.child("image").setValue(uri.toString())
+            }
+        }
+    }
+
+
 }

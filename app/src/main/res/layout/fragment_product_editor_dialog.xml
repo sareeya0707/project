@@ -21,31 +21,40 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginBottom="16dp">
+    <android.support.design.widget.TextInputLayout
+            android:id="@+id/layoutProductImage"
+            style="@style/Widget.TextInputLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:errorEnabled="true">
 
-        <ImageView
-                android:id="@+id/imvProductImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="200dp"
-                android:minWidth="200dp"
-                android:scaleType="centerCrop"
-                android:background="@android:color/darker_gray"/>
+        <RelativeLayout
+                android:layout_width="200dp"
+                android:layout_height="200dp">
 
-        <TextView
-                android:id="@+id/btnChooseImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:background="#9C000000"
-                android:gravity="center"
-                android:textColor="@android:color/white"
-                android:layout_alignBottom="@+id/imvProductImage"
-                android:text="เลือกรูปภาพ"/>
-    </RelativeLayout>
+            <ImageView
+                    android:id="@+id/imvProductImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="200dp"
+                    android:minWidth="200dp"
+                    android:scaleType="centerCrop"
+                    android:background="@android:color/darker_gray"/>
+
+            <TextView
+                    android:id="@+id/btnChooseImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:background="#9C000000"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:layout_alignBottom="@+id/imvProductImage"
+                    android:text="เลือกรูปภาพ"/>
+        </RelativeLayout>
+
+    </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
             android:id="@+id/layoutProductName"

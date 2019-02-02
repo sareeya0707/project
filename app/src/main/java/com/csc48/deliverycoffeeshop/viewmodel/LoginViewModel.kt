@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import com.csc48.deliverycoffeeshop.model.UserModel
+import com.csc48.deliverycoffeeshop.ui.MainAdminActivity
 import com.csc48.deliverycoffeeshop.ui.MainCustomerActivity
 import com.csc48.deliverycoffeeshop.ui.UserInfoActivity
 import com.google.firebase.FirebaseException
@@ -131,7 +132,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                     } else {
                         val user = dataSnapshot.getValue(UserModel::class.java)!!
                         if (user.is_admin) {
-                            val intent = Intent(activity, MainAdminViewModel::class.java)
+                            val intent = Intent(activity, MainAdminActivity::class.java)
                             activity.startActivity(intent)
                             activity.finish()
                         } else {

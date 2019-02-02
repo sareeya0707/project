@@ -5,9 +5,12 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
+import android.widget.LinearLayout
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.ProductsAdapter
+import com.csc48.deliverycoffeeshop.model.ProductModel
+import com.csc48.deliverycoffeeshop.ui.fragment.ProductEditorDialogFragment
 import com.csc48.deliverycoffeeshop.viewmodel.ProductManagementViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -23,7 +26,7 @@ class ProductManagementActivity : AppCompatActivity(), HasSupportFragmentInjecto
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
     private lateinit var mViewModel: ProductManagementViewModel
-    private val adapter = ProductsAdapter()
+    private val adapter = ProductsAdapter(true)
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
         return dispatchingAndroidInjector
@@ -35,19 +38,28 @@ class ProductManagementActivity : AppCompatActivity(), HasSupportFragmentInjecto
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ProductManagementViewModel::class.java)
         setContentView(R.layout.activity_product_management)
 
-        rvProducts.layoutManager = LinearLayoutManager(this)
+        adapter.setOnAvailableChangeListener(object : ProductsAdapter.OnAvailableChangeListener {
+            override fun onAvailableChange(productModel: ProductModel) {
+                mViewModel.updateProduct(productModel, null)
+            }
+        })
+        rvProducts.layoutManager = GridLayoutManager(this, 2, LinearLayout.VERTICAL, false)
+        rvProducts.setHasFixedSize(true)
         rvProducts.adapter = adapter
 
         btnAddProduct.setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, ProductEditorFragment(), "ProductEditorFragment")
-                .addToBackStack(null)
-                .commit()
+            val productEditorDialogFragment = ProductEditorDialogFragment()
+            productEditorDialogFragment.show(supportFragmentManager, "ProductEditorDialogFragment")
         }
 
         mViewModel.products.observe(this, Observer { products ->
             adapter.mData = products ?: listOf()
             adapter.notifyDataSetChanged()
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mViewModel.getProducts()
     }
 }

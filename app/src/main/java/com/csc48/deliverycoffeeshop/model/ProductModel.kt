@@ -9,7 +9,8 @@ data class ProductModel(
     var name: String? = null,
     var price: Double = 0.0,
     var image: String? = null,
-    var create_at: Int = 0,
-    var update_at: Int = 0,
+    var quantity: Int? = null,
+    var create_at: Long = 0,
+    var update_at: Long = 0,
     var available: Boolean = false
 ) : Parcelable
