@@ -47,6 +47,10 @@ class ProductManagementActivity : AppCompatActivity(), HasSupportFragmentInjecto
         rvProducts.setHasFixedSize(true)
         rvProducts.adapter = adapter
 
+        btnBack.setOnClickListener {
+            this.finish()
+        }
+
         btnAddProduct.setOnClickListener {
             val productEditorDialogFragment = ProductEditorDialogFragment()
             productEditorDialogFragment.show(supportFragmentManager, "ProductEditorDialogFragment")

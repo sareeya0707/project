@@ -1,13 +1,11 @@
 package com.csc48.deliverycoffeeshop.adapter
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Switch
-import android.widget.TextView
+import android.widget.*
 import com.bumptech.glide.Glide
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.ProductModel
@@ -20,7 +18,7 @@ class ProductsAdapter constructor(private val isAdmin: Boolean) : RecyclerView.A
     private var availableCallback: OnAvailableChangeListener? = null
 
     interface OnSelectListener {
-        fun onSelectItem(productModel: ProductModel)
+        fun onSelectItem(productModel: ProductModel, isSelected: Boolean)
     }
 
     interface OnAvailableChangeListener {
@@ -88,6 +86,7 @@ class ProductsAdapter constructor(private val isAdmin: Boolean) : RecyclerView.A
 
     internal inner class CustomerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val context = itemView.context
+        private val rootItem = itemView.findViewById<LinearLayout>(R.id.rootItem)
         private val imvProductImage = itemView.findViewById<ImageView>(R.id.imvProductImage)
         private val tvProductName = itemView.findViewById<TextView>(R.id.tvProductName)
         private val tvProductPrice = itemView.findViewById<TextView>(R.id.tvProductPrice)
@@ -95,8 +94,12 @@ class ProductsAdapter constructor(private val isAdmin: Boolean) : RecyclerView.A
 
         init {
             btnChooseProduct.setOnClickListener {
-                selectCallback?.onSelectItem(mData[adapterPosition])
+                rootItem.isSelected = !rootItem.isSelected
+                selectCallback?.onSelectItem(mData[adapterPosition], rootItem.isSelected)
             }
+
+            if (rootItem.isSelected) rootItem.setBackgroundColor(Color.GREEN)
+            else rootItem.setBackgroundColor(Color.WHITE)
         }
 
         fun bindViews(productModel: ProductModel) {

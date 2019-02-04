@@ -48,4 +48,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(OrderDetailAdminViewModel::class)
     abstract fun bindOrderDetailAdminViewModel(orderDetailAdminViewModel: OrderDetailAdminViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UserManagementViewModel::class)
+    abstract fun bindUserManagementViewModel(userManagementViewModel: UserManagementViewModel): ViewModel
 }

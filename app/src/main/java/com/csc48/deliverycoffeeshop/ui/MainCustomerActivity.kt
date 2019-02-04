@@ -27,7 +27,7 @@ class MainCustomerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main_customer)
 
         adapter.setOnSelectListener(object : ProductsAdapter.OnSelectListener {
-            override fun onSelectItem(productModel: ProductModel) {
+            override fun onSelectItem(productModel: ProductModel, isSelected: Boolean) {
 
             }
         })

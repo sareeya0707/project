@@ -46,6 +46,7 @@ class UserInfoViewModel @Inject constructor() : ViewModel() {
     fun saveUserInfo(userModel: UserModel) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
+            userModel.uid = currentUser.uid
             database.reference.child("users").child(currentUser.uid).setValue(userModel).addOnCompleteListener {
                 saveUserInfoResponse.value = it
             }
