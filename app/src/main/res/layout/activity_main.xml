@@ -13,13 +13,32 @@
             android:elevation="4dp"
             android:background="@android:color/holo_orange_dark">
 
+        <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:text="เข้าสู่ระบบ"
+                android:visibility="gone"/>
+
+        <Button
+                android:id="@+id/btnAdminConsole"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:text="จัดการระบบ"
+                android:visibility="gone"/>
+
         <ImageView
                 android:id="@+id/btnCreateOrder"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentEnd="true"
                 android:padding="8dp"
-                app:srcCompat="@drawable/ic_add"/>
+                app:srcCompat="@drawable/ic_add"
+                android:visibility="gone"/>
 
     </RelativeLayout>
 

@@ -47,7 +47,7 @@ class UserInfoActivity : AppCompatActivity() {
                             val intent = Intent(this, MainAdminActivity::class.java)
                             startActivity(intent)
                         } else {
-                            val intent = Intent(this, MainCustomerActivity::class.java)
+                            val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                         }
                         finish()

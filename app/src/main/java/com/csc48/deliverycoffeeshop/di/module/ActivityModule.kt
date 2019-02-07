@@ -7,7 +7,7 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ActivityModule {
     @ContributesAndroidInjector()
-    abstract fun contributeMainCustomerActivity(): MainCustomerActivity
+    abstract fun contributeMainCustomerActivity(): MainActivity
 
     @ContributesAndroidInjector()
     abstract fun contributeMainAdminActivity(): MainAdminActivity
