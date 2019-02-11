@@ -1,6 +1,5 @@
 package com.csc48.deliverycoffeeshop.adapter
 
-import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +9,16 @@ import com.bumptech.glide.Glide
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.ProductModel
 
-class ProductsAdapter constructor(private val isAdmin: Boolean) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mData: List<ProductModel> = listOf()
+    var isAdmin: Boolean = false
 
     private var selectCallback: OnSelectListener? = null
 
     private var availableCallback: OnAvailableChangeListener? = null
 
     interface OnSelectListener {
-        fun onSelectItem(productModel: ProductModel, isSelected: Boolean)
+        fun onSelectItem(productModel: ProductModel)
     }
 
     interface OnAvailableChangeListener {
@@ -95,11 +95,8 @@ class ProductsAdapter constructor(private val isAdmin: Boolean) : RecyclerView.A
         init {
             btnChooseProduct.setOnClickListener {
                 rootItem.isSelected = !rootItem.isSelected
-                selectCallback?.onSelectItem(mData[adapterPosition], rootItem.isSelected)
+                selectCallback?.onSelectItem(mData[adapterPosition])
             }
-
-            if (rootItem.isSelected) rootItem.setBackgroundColor(Color.GREEN)
-            else rootItem.setBackgroundColor(Color.WHITE)
         }
 
         fun bindViews(productModel: ProductModel) {

@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import com.csc48.deliverycoffeeshop.ui.ProductActivity
 import com.csc48.deliverycoffeeshop.ui.UserInfoActivity
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -127,18 +128,9 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                         activity.startActivity(intent)
                         activity.finish()
                     } else {
-//                        val user = dataSnapshot.getValue(UserModel::class.java)!!
+                        val intent = Intent(activity, ProductActivity::class.java)
+                        activity.startActivity(intent)
                         activity.finish()
-//                        if (user.is_admin) {
-//                            val intent = Intent(activity, MainAdminActivity::class.java)
-//                            activity.startActivity(intent)
-//                            activity.finish()
-//                        } else {
-//                            val intent = Intent(activity, MainActivity::class.java)
-//                            activity.startActivity(intent)
-//                            activity.finish()
-//                        }
-
                     }
                 }
 

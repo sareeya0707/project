@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.csc48.deliverycoffeeshop.model.ProductModel
+import com.csc48.deliverycoffeeshop.model.UserModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -13,14 +14,31 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
-class ProductManagementViewModel @Inject constructor() : ViewModel() {
-    private val TAG = ProductManagementViewModel::class.java.simpleName
+class ProductViewModel @Inject constructor() : ViewModel() {
+    private val TAG = ProductViewModel::class.java.simpleName
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
     private val storage = FirebaseStorage.getInstance()
 
     val products = MutableLiveData<List<ProductModel>>()
     val response = MutableLiveData<Task<Void>>()
+    val user = MutableLiveData<UserModel>()
+
+    fun getUser() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val ref = database.reference.child("users").child(currentUser.uid)
+            ref.addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d(TAG, "getUser databaseError : $databaseError")
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    user.value = dataSnapshot.getValue(UserModel::class.java)
+                }
+            })
+        }
+    }
 
     fun getProducts() {
         val ref = database.reference.child("products")

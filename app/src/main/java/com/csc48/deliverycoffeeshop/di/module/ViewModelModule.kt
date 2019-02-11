@@ -31,8 +31,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ProductManagementViewModel::class)
-    abstract fun bindProductManagementViewModel(productManagementViewModel: ProductManagementViewModel): ViewModel
+    @ViewModelKey(ProductViewModel::class)
+    abstract fun bindProductManagementViewModel(productManagementViewModel: ProductViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -6,11 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.view.View
 import android.widget.LinearLayout
 import com.csc48.deliverycoffeeshop.R
-import com.csc48.deliverycoffeeshop.adapter.ProductsAdapter
-import com.csc48.deliverycoffeeshop.model.ProductModel
+import com.csc48.deliverycoffeeshop.adapter.TopProductAdapter
 import com.csc48.deliverycoffeeshop.viewmodel.MainViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -21,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
     private lateinit var mViewModel: MainViewModel
-    private val adapter = ProductsAdapter(false)
+    private val adapter = TopProductAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +27,7 @@ class MainActivity : AppCompatActivity() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel::class.java)
         setContentView(R.layout.activity_main)
 
-        adapter.setOnSelectListener(object : ProductsAdapter.OnSelectListener {
-            override fun onSelectItem(productModel: ProductModel, isSelected: Boolean) {
-
-            }
-        })
-        rvProducts.layoutManager = GridLayoutManager(this, 2, LinearLayout.VERTICAL, false)
+        rvProducts.layoutManager = GridLayoutManager(this, 1, LinearLayout.HORIZONTAL, false)
         rvProducts.setHasFixedSize(true)
         rvProducts.adapter = adapter
 
@@ -43,33 +36,35 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         })
 
-        mViewModel.user.observe(this, Observer { user ->
-            val isAdmin = user?.is_admin ?: false
-            if (isAdmin) {
-                btnAdminConsole.visibility = View.VISIBLE
-                btnCreateOrder.visibility = View.GONE
-            } else {
-                btnAdminConsole.visibility = View.GONE
-                btnCreateOrder.visibility = View.VISIBLE
-            }
-        })
-
-        btnLogin.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+        btnOrder.setOnClickListener {
+            userPermissionCheck()
         }
     }
 
     override fun onResume() {
         super.onResume()
         mViewModel.getProducts()
+    }
 
+    private fun userPermissionCheck() {
         val isLogin = mViewModel.checkSession()
         if (isLogin) {
-            btnLogin.visibility = View.GONE
+            mViewModel.hasUserData.observe(this, Observer { isExist ->
+                if (isExist != null) {
+                    if (isExist) {
+                        val intent = Intent(this, ProductActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        val intent = Intent(this, UserInfoActivity::class.java)
+                        startActivity(intent)
+                    }
+                    mViewModel.hasUserData.value = null
+                }
+            })
             mViewModel.getUser()
         } else {
-            btnLogin.visibility = View.VISIBLE
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
 }

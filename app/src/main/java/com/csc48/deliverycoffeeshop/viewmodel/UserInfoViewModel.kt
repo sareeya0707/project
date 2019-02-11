@@ -31,14 +31,11 @@ class UserInfoViewModel @Inject constructor() : ViewModel() {
 
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val raw = dataSnapshot.getValue(UserModel::class.java) ?: UserModel()
-                        Log.d("MLOG", "raw: $raw")
                         if (raw.phone_number.isNullOrBlank()) {
-                            Log.d("MLOG", "THIS2")
                             raw.phone_number = convertPhoneNumberFormat(currentUser.phoneNumber)
                         }
                         user.value = raw
                     }
-
                 })
         }
     }

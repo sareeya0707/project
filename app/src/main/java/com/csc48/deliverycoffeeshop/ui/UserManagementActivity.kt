@@ -31,7 +31,6 @@ class UserManagementActivity : AppCompatActivity() {
             override fun onAvailableChange(userModel: UserModel) {
                 mViewModel.updateUser(userModel)
             }
-
         })
         rvUsers.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         rvUsers.setHasFixedSize(true)

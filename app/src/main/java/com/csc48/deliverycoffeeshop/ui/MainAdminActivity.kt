@@ -23,7 +23,7 @@ class MainAdminActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main_admin)
 
         btnProductManage.setOnClickListener {
-            val intent = Intent(this, ProductManagementActivity::class.java)
+            val intent = Intent(this, ProductActivity::class.java)
             startActivity(intent)
         }
     }

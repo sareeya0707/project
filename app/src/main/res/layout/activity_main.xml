@@ -1,51 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-    <RelativeLayout
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            android:elevation="4dp"
-            android:background="@android:color/holo_orange_dark">
-
-        <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:text="เข้าสู่ระบบ"
-                android:visibility="gone"/>
-
-        <Button
-                android:id="@+id/btnAdminConsole"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:text="จัดการระบบ"
-                android:visibility="gone"/>
-
-        <ImageView
-                android:id="@+id/btnCreateOrder"
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_alignParentEnd="true"
-                android:padding="8dp"
-                app:srcCompat="@drawable/ic_add"
-                android:visibility="gone"/>
-
-    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
             android:id="@+id/rvProducts"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"/>
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:id="@+id/btnOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rvProducts"
+            android:layout_margin="16dp"
+            android:layout_centerHorizontal="true"
+            android:text="สั่งเครื่องดื่ม"/>
 
 </RelativeLayout>

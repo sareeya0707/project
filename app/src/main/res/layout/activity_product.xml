@@ -22,12 +22,22 @@
                 app:srcCompat="@drawable/ic_arrow_back"/>
 
         <ImageView
-                android:id="@+id/btnAddProduct"
+                android:id="@+id/btnAdminConsole"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentEnd="true"
                 android:padding="8dp"
-                app:srcCompat="@drawable/ic_add"/>
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_menu"/>
+
+        <ImageView
+                android:id="@+id/btnCustomerConsole"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_alignParentEnd="true"
+                android:padding="8dp"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_menu"/>
 
     </RelativeLayout>
 

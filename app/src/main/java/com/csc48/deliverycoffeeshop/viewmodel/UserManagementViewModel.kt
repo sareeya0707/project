@@ -19,10 +19,10 @@ class UserManagementViewModel @Inject constructor() : ViewModel() {
     val users = MutableLiveData<List<UserModel>>()
 
     fun getUsers() {
-        val ref = database.reference.child("products")
+        val ref = database.reference.child("users")
         ref.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.d(TAG, "getProducts databaseError : $databaseError")
+                Log.d(TAG, "getUsers databaseError : $databaseError")
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {

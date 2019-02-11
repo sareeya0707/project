@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.csc48.deliverycoffeeshop.model.ProductModel
-import com.csc48.deliverycoffeeshop.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -20,7 +19,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
     private val storage = FirebaseStorage.getInstance()
 
     val products = MutableLiveData<List<ProductModel>>()
-    val user = MutableLiveData<UserModel>()
+    val hasUserData = MutableLiveData<Boolean>()
 
     fun checkSession(): Boolean {
         return auth.currentUser != null
@@ -28,7 +27,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     fun getProducts() {
         val ref = database.reference.child("products")
-        ref.addValueEventListener(object : ValueEventListener {
+        ref.orderByChild("update_at").addValueEventListener(object : ValueEventListener {
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.d(TAG, "getProducts databaseError : $databaseError")
             }
@@ -60,11 +59,8 @@ class MainViewModel @Inject constructor() : ViewModel() {
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.hasChildren()) {
-                        user.value = dataSnapshot.getValue(UserModel::class.java)
-                    }
+                    hasUserData.value = dataSnapshot.hasChildren()
                 }
-
             })
         }
     }

@@ -10,7 +10,6 @@ import android.text.Editable
 import android.widget.Toast
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.UserModel
-import com.csc48.deliverycoffeeshop.safeLet
 import com.csc48.deliverycoffeeshop.viewmodel.UserInfoViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -29,8 +28,8 @@ class UserInfoActivity : AppCompatActivity() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(UserInfoViewModel::class.java)
         setContentView(R.layout.activity_user_info)
 
-        mViewModel.user.observe(this, Observer {
-            it?.also { user ->
+        mViewModel.user.observe(this, Observer { user ->
+            if (user != null) {
                 edtFName.text = editable.newEditable(user.first_name ?: "")
                 edtLName.text = editable.newEditable(user.last_name ?: "")
                 edtPhone.text = editable.newEditable(user.phone_number ?: "")
@@ -39,18 +38,13 @@ class UserInfoActivity : AppCompatActivity() {
         })
         mViewModel.getUserInfo()
 
-        mViewModel.saveUserInfoResponse.observe(this, Observer {
-            safeLet(it, mViewModel.user.value) { response, user ->
+        mViewModel.saveUserInfoResponse.observe(this, Observer { response ->
+            if (response != null) {
                 when {
                     response.isSuccessful -> {
-                        if (user.is_admin) {
-                            val intent = Intent(this, MainAdminActivity::class.java)
-                            startActivity(intent)
-                        } else {
-                            val intent = Intent(this, MainActivity::class.java)
-                            startActivity(intent)
-                        }
-                        finish()
+                        val intent = Intent(this, ProductActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        this.startActivity(intent)
                     }
                     response.isCanceled -> {
                         Toast.makeText(this, "${response.result}", Toast.LENGTH_LONG).show()
@@ -81,6 +75,7 @@ class UserInfoActivity : AppCompatActivity() {
                 this.last_name = lName
                 this.phone_number = phone
                 this.address = address
+                this.is_admin = mViewModel.user.value?.is_admin ?: false
             }
             mViewModel.saveUserInfo(userModel)
         }
