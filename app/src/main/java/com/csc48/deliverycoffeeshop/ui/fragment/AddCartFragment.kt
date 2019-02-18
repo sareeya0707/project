@@ -6,6 +6,7 @@ import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,6 +72,7 @@ class AddCartFragment : DialogFragment() {
         if (quantity.isNotBlank() && quantity != "0") {
             layoutProductQuantity.error = null
             if (product != null) {
+                Log.d(TAG, "product: $product")
                 callback?.onAddCart(product!!)
                 dismiss()
             }

@@ -45,12 +45,12 @@ class ProductEditorDialogFragment : DialogFragment() {
             saveProductData()
         }
 
-        mViewModel.response.value = null
-        mViewModel.response.observe(this, Observer {
+        mViewModel.updateProductResponse.value = null
+        mViewModel.updateProductResponse.observe(this, Observer {
             it?.also { response ->
                 when {
                     response.isSuccessful -> {
-                        this.dismiss()
+                        dialog.dismiss()
                     }
                     response.isCanceled -> {
                         Toast.makeText(context, "คำขอไม่สำเร็จ", Toast.LENGTH_SHORT).show()
@@ -59,6 +59,11 @@ class ProductEditorDialogFragment : DialogFragment() {
 
             }
         })
+    }
+
+    override fun onDestroy() {
+        mViewModel.updateProductResponse.value = null
+        super.onDestroy()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
