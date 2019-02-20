@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import com.csc48.deliverycoffeeshop.model.OrderModel
 import com.csc48.deliverycoffeeshop.model.ProductModel
+import com.csc48.deliverycoffeeshop.model.StaticModel
 import com.csc48.deliverycoffeeshop.model.UserModel
 import com.csc48.deliverycoffeeshop.ui.MainActivity
 import com.google.android.gms.tasks.Task
@@ -80,6 +81,7 @@ class ProductViewModel @Inject constructor() : ViewModel() {
         val ref = database.reference.child("products")
         val pid = if (productModel.key != null) productModel.key else ref.push().key
         if (pid != null) {
+            productModel.key = pid
             ref.child(pid).setValue(productModel).addOnCompleteListener { task ->
                 if (task.isSuccessful && byteArray != null) uploadProductImage(pid, byteArray)
                 updateProductResponse.value = task
@@ -111,9 +113,25 @@ class ProductViewModel @Inject constructor() : ViewModel() {
         val ref = database.reference.child("orders")
         val pid = if (orderModel.key != null) orderModel.key else ref.push().key
         if (pid != null) {
+            orderModel.key = pid
+            updateStatic(orderModel)
             ref.child(pid).setValue(orderModel).addOnCompleteListener { task ->
                 updateOrderResponse.value = task
             }
+        }
+    }
+
+    private fun updateStatic(orderModel: OrderModel) {
+        if (orderModel.key != null) {
+            val ref = database.reference.child("product-static").child(orderModel.key!!)
+            val statics = orderModel.products?.map { s ->
+                StaticModel().apply {
+                    key = s.key
+                    quantity = s.quantity ?: 0
+                    create_at = orderModel.create_at
+                }
+            }
+            ref.setValue(statics)
         }
     }
 

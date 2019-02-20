@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/rootItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_margin="8dp"
+                android:background="@android:color/white"
+                android:padding="8dp">
+
+    <LinearLayout
+            android:id="@+id/layoutOrderInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@+id/layoutOrderStatus">
+
+        <TextView
+                android:id="@+id/tvOrderName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:textColor="@android:color/black"
+                android:textSize="20dp"/>
+
+
+        <TextView
+                android:id="@+id/tvOrderAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textColor="@android:color/black"
+                android:textSize="20dp"/>
+
+        <TextView
+                android:id="@+id/tvCreateDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@android:color/black"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+            android:id="@+id/layoutOrderStatus"
+            android:layout_width="126dp"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@+id/layoutOrderInfo"
+            android:layout_alignBottom="@+id/layoutOrderInfo"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/holo_orange_light"
+            android:padding="8dp">
+
+        <TextView
+                android:id="@+id/tvOrderStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:layout_centerInParent="true"
+                android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -3,4 +3,11 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="colorOrderWaiting">@android:color/darker_gray</color>
+    <color name="colorOrderCooking">@android:color/holo_orange_light</color>
+    <color name="colorOrderShipping">@android:color/holo_blue_light</color>
+    <color name="colorOrderSuccess">@android:color/holo_green_light</color>
+    <color name="colorOrderCancel">@android:color/holo_red_light</color>
+
 </resources>

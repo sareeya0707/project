@@ -94,22 +94,26 @@ class OrderEditorFragment : Fragment() {
     }
 
     private fun checkOrderInput() {
+        val uid = userModel?.uid
         val name = edtCustomerName.text.toString().trim()
         val address = edtCustomerAddress.text.toString().trim()
 
         val isNameValid = checkField(name, layoutCustomerName, "กรุณากรอกชื่อผู้รับ")
         val isAddressValid = checkField(address, layoutCustomerAddress, "กรุณากรอกที่อยู่จัดส่ง")
 
-        if (isNameValid && isAddressValid) {
+        if (isNameValid && isAddressValid && uid != null) {
             val orderModel = OrderModel().apply {
                 if (currentLocation != null) {
                     location_lat = currentLocation!!.latitude
                     location_lng = currentLocation!!.longitude
                 }
+                shipping_uid = uid
                 shipping_name = name
                 shipping_address = address
                 products = cart
                 net_price = cart.map { s -> s.price * (s.quantity ?: 0) }.sum()
+                create_at = System.currentTimeMillis()
+                update_at = System.currentTimeMillis()
             }
 
             callback?.onCreateOrder(orderModel)

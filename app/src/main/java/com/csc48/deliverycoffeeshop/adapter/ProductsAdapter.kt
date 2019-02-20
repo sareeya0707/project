@@ -63,6 +63,7 @@ class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
             swProductAvailable.setOnCheckedChangeListener { _, isChecked ->
                 val productModel = mData[adapterPosition].apply {
+                    update_at = System.currentTimeMillis()
                     available = isChecked
                 }
                 availableCallback?.onAvailableChange(productModel)
