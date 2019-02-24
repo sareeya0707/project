@@ -6,4 +6,5 @@
     <string name="orderShipping">กำลังจัดส่ง</string>
     <string name="orderSuccess">ส่งสำเร็จ</string>
     <string name="orderCancel">ยกเลิก</string>
+    <string name="label_cancel_order"><u>ยกเลิกรายการ</u></string>
 </resources>

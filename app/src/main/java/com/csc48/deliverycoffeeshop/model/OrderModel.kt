@@ -18,6 +18,7 @@ data class OrderModel(
     var location_lng: Double? = null,
     var shipping_uid: String? = null,
     var shipping_name: String? = null,
+    var shipping_phone: String? = null,
     var shipping_address: String? = null,
     var status: OrderStatus = OrderStatus.WAITING,
     var products: List<ProductModel>? = listOf(),

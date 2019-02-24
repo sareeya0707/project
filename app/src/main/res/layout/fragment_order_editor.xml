@@ -74,6 +74,45 @@
             </LinearLayout>
 
             <LinearLayout
+                    android:id="@+id/layoutPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                <TextView
+                        android:id="@+id/tvCustomerPhone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:text="เบอร์ติดต่อ"
+                        android:textColor="@android:color/black"
+                        android:textSize="20dp"
+                        android:layout_weight="1"/>
+
+                <android.support.design.widget.TextInputLayout
+                        android:id="@+id/layoutCustomerPhone"
+                        style="@style/Widget.TextInputLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:focusableInTouchMode="true"
+                        android:layout_weight="3"
+                        app:errorEnabled="true">
+
+                    <android.support.design.widget.TextInputEditText
+                            android:id="@+id/edtCustomerPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="8dp"
+                            android:inputType="phone"
+                            android:maxLines="1"
+                            android:background="@drawable/input_field_background"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                     android:id="@+id/layoutAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

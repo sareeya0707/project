@@ -22,12 +22,11 @@ import kotlinx.android.synthetic.main.fragment_map_dialog.*
 
 class MapDialogFragment : DialogFragment(), OnMapReadyCallback {
     private val TAG = MapDialogFragment::class.java.simpleName
-    private lateinit var mMap: GoogleMap
+    private var mMap: GoogleMap? = null
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var centerLocation: LatLng? = null
     private var callback: OnMapLocation? = null
-    private var mapReady: Boolean = false
 
     interface OnMapLocation {
         fun onLocationSuccess(latLng: LatLng)
@@ -59,7 +58,7 @@ class MapDialogFragment : DialogFragment(), OnMapReadyCallback {
         }
 
         btnReLocation.setOnClickListener {
-            if (mapReady) getCurrentLocation()
+            getCurrentLocation()
         }
     }
 
@@ -71,29 +70,30 @@ class MapDialogFragment : DialogFragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         Log.d(TAG, "onMapReady")
         mMap = googleMap
-        mapReady = true
         getCurrentLocation()
     }
 
     @SuppressLint("MissingPermission")
     private fun getCurrentLocation() {
-        mMap.clear()
-        fusedLocationClient.lastLocation.addOnCompleteListener { task ->
-            when {
-                task.isSuccessful -> {
-                    val location = task.result
-                    if (location != null) {
-                        centerLocation = LatLng(location.latitude, location.longitude)
-                        mMap.addMarker(MarkerOptions().position(centerLocation!!).title("Here"))
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centerLocation, 12F))
-                    } else {
+        mMap?.also { mMap ->
+            mMap.clear()
+            fusedLocationClient.lastLocation.addOnCompleteListener { task ->
+                when {
+                    task.isSuccessful -> {
+                        val location = task.result
+                        if (location != null) {
+                            centerLocation = LatLng(location.latitude, location.longitude)
+                            mMap.addMarker(MarkerOptions().position(centerLocation!!).title("Here"))
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centerLocation, 12F))
+                        } else {
+                            callback?.onLocationFail()
+                            dialog.dismiss()
+                        }
+                    }
+                    task.isCanceled -> {
                         callback?.onLocationFail()
                         dialog.dismiss()
                     }
-                }
-                task.isCanceled -> {
-                    callback?.onLocationFail()
-                    dialog.dismiss()
                 }
             }
         }

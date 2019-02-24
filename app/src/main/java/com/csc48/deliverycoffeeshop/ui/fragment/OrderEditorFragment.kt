@@ -70,8 +70,10 @@ class OrderEditorFragment : Fragment() {
 
         if (userModel != null) {
             val name = "${userModel?.first_name ?: ""} ${userModel?.last_name ?: ""}"
+            val phone = userModel?.phone_number ?: ""
             val address = userModel?.address ?: ""
             edtCustomerName.text = editable.newEditable(name)
+            edtCustomerPhone.text = editable.newEditable(phone)
             edtCustomerAddress.text = editable.newEditable(address)
         }
 
@@ -96,12 +98,14 @@ class OrderEditorFragment : Fragment() {
     private fun checkOrderInput() {
         val uid = userModel?.uid
         val name = edtCustomerName.text.toString().trim()
+        val phone = edtCustomerPhone.text.toString().trim()
         val address = edtCustomerAddress.text.toString().trim()
 
         val isNameValid = checkField(name, layoutCustomerName, "กรุณากรอกชื่อผู้รับ")
+        val isPhoneValid = checkField(phone, layoutCustomerPhone, "กรุณากรอกเบอร์ติดต่อ")
         val isAddressValid = checkField(address, layoutCustomerAddress, "กรุณากรอกที่อยู่จัดส่ง")
 
-        if (isNameValid && isAddressValid && uid != null) {
+        if (isNameValid && isAddressValid && isPhoneValid && uid != null) {
             val orderModel = OrderModel().apply {
                 if (currentLocation != null) {
                     location_lat = currentLocation!!.latitude
@@ -109,6 +113,7 @@ class OrderEditorFragment : Fragment() {
                 }
                 shipping_uid = uid
                 shipping_name = name
+                shipping_phone = phone
                 shipping_address = address
                 products = cart
                 net_price = cart.map { s -> s.price * (s.quantity ?: 0) }.sum()
