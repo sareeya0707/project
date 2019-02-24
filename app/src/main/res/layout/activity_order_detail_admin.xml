@@ -22,14 +22,6 @@
                 app:srcCompat="@drawable/ic_arrow_back"/>
 
         <ImageView
-                android:id="@+id/btnMap"
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_toStartOf="@+id/btnCancelOrder"
-                android:padding="12dp"
-                app:srcCompat="@drawable/ic_map"/>
-
-        <ImageView
                 android:id="@+id/btnCancelOrder"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
@@ -38,24 +30,6 @@
                 app:srcCompat="@drawable/ic_delete"/>
 
     </RelativeLayout>
-
-    <LinearLayout
-            android:id="@+id/layoutMap"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_below="@+id/toolbar"
-            android:visibility="gone">
-
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:id="@+id/map"
-                  tools:context=".MapsActivity"
-                  android:name="com.google.android.gms.maps.SupportMapFragment"/>
-
-    </LinearLayout>
 
     <LinearLayout
             android:id="@+id/layoutDetail"
