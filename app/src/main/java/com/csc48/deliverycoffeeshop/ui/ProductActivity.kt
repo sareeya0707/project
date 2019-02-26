@@ -193,6 +193,7 @@ class ProductActivity : AppCompatActivity()
             if (task != null) {
                 when {
                     task.isSuccessful -> {
+                        cart = listOf()
                         Toast.makeText(this, "สร้างออเดอร์สำเร็จ", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, OrderManagementActivity::class.java)
                         startActivity(intent)

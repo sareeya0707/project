@@ -31,19 +31,28 @@ class MainActivity : AppCompatActivity() {
         rvProducts.setHasFixedSize(true)
         rvProducts.adapter = adapter
 
+        // observe ตัวแปร LiveData แล้วเอาข้อมูลของมันมาใช้ทำอะไรต่างๆ
         mViewModel.products.observe(this, Observer { products ->
             adapter.mData = products ?: listOf()
             adapter.notifyDataSetChanged()
+            mViewModel.getStatistic()
+        })
+        mViewModel.getProducts()
+
+        mViewModel.statistics.observe(this, Observer { statistics ->
+            if (statistics != null) {
+                adapter.mData.forEach { s ->
+                    val hasData = statistics.find { it.key == s.key }
+                    if (hasData != null) s.quantity = hasData.quantity
+                }
+                adapter.mData = adapter.mData.sortedBy { it.quantity }
+                adapter.notifyDataSetChanged()
+            }
         })
 
         btnOrder.setOnClickListener {
             userPermissionCheck()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mViewModel.getProducts()
     }
 
     private fun userPermissionCheck() {

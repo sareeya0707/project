@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class StaticModel(
+data class StatisticModel(
     var key: String? = null,
     var quantity: Int = 0,
     var create_at: Long = 0

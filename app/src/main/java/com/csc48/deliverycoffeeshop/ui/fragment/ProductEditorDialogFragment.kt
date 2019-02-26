@@ -49,14 +49,9 @@ class ProductEditorDialogFragment : DialogFragment() {
         mViewModel.updateProductResponse.observe(this, Observer {
             it?.also { response ->
                 when {
-                    response.isSuccessful -> {
-                        dialog.dismiss()
-                    }
-                    response.isCanceled -> {
-                        Toast.makeText(context, "คำขอไม่สำเร็จ", Toast.LENGTH_SHORT).show()
-                    }
+                    response.isSuccessful -> dialog.dismiss()
+                    response.isCanceled -> Toast.makeText(context, "คำขอไม่สำเร็จ", Toast.LENGTH_SHORT).show()
                 }
-
             }
         })
     }
