@@ -1,67 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
-            android:id="@+id/layoutContent"
+        <RelativeLayout
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            android:background="@android:color/holo_orange_dark"
+            android:elevation="4dp"
+            android:minHeight="?attr/actionBarSize">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_alignParentStart="true"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_arrow_back" />
+
+        </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/layoutContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:id="@+id/layoutLoginField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center_horizontal"
+                android:orientation="vertical"
                 android:visibility="gone">
 
-            <android.support.design.widget.TextInputLayout
+                <android.support.design.widget.TextInputLayout
                     android:id="@+id/layoutPhoneLogin"
                     style="@style/Widget.TextInputLayout"
                     android:layout_width="240dp"
                     android:layout_height="wrap_content"
-                    android:hint="เบอร์โทรศัพท์"
                     android:focusableInTouchMode="true"
+                    android:hint="เบอร์โทรศัพท์"
                     app:errorEnabled="true">
 
-                <android.support.design.widget.TextInputEditText
+                    <android.support.design.widget.TextInputEditText
                         android:id="@+id/edtPhoneLogin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/input_field_background"
                         android:drawablePadding="8dp"
                         android:inputType="phone"
-                        android:maxLines="1"
                         android:maxLength="10"
-                        android:background="@drawable/input_field_background"/>
+                        android:maxLines="1" />
 
-            </android.support.design.widget.TextInputLayout>
+                </android.support.design.widget.TextInputLayout>
 
-            <Button
+                <Button
                     android:id="@+id/btnLogin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:text="เข้าสู่ระบบ"/>
+                    android:text="เข้าสู่ระบบ" />
 
-        </LinearLayout>
+            </LinearLayout>
 
-        <LinearLayout
+            <LinearLayout
                 android:id="@+id/layoutOTPField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center_horizontal"
+                android:orientation="vertical"
                 android:visibility="gone">
 
-            <android.support.design.widget.TextInputLayout
+                <android.support.design.widget.TextInputLayout
                     android:id="@+id/layoutOTP"
                     style="@style/Widget.Design.TextInputLayout"
                     android:layout_width="240dp"
@@ -69,37 +89,45 @@
                     android:hint="OTP"
                     app:errorEnabled="true">
 
-                <android.support.design.widget.TextInputEditText
+                    <android.support.design.widget.TextInputEditText
                         android:id="@+id/edtOTP"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/input_field_background"
                         android:drawablePadding="8dp"
-                        android:padding="8dp"
                         android:inputType="phone"
-                        android:maxLines="1"
                         android:maxLength="10"
-                        android:background="@drawable/input_field_background"/>
+                        android:maxLines="1"
+                        android:padding="8dp" />
 
-            </android.support.design.widget.TextInputLayout>
+                </android.support.design.widget.TextInputLayout>
 
-            <Button
+                <Button
                     android:id="@+id/btnSubmit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:text="ยืนยัน"/>
+                    android:text="ยืนยัน" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
-    <ProgressBar
-            android:id="@+id/progressLogin"
+    <FrameLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/translucentBlack"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_gravity="center" />
 
-</android.support.constraint.ConstraintLayout>
+    </FrameLayout>
+
+</RelativeLayout>

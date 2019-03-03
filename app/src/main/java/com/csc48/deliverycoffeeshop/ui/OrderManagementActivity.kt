@@ -13,6 +13,7 @@ import com.csc48.deliverycoffeeshop.viewmodel.OrderManagementViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main_admin.*
+import kotlinx.android.synthetic.main.activity_order_detail_customer.*
 import javax.inject.Inject
 
 class OrderManagementActivity : AppCompatActivity() {
@@ -60,5 +61,9 @@ class OrderManagementActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
             }
         })
+
+        btnBack.setOnClickListener {
+            this.finish()
+        }
     }
 }

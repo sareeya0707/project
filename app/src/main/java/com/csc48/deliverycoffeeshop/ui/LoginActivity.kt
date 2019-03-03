@@ -25,16 +25,16 @@ class LoginActivity : AppCompatActivity() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel::class.java)
         setContentView(R.layout.activity_login)
 
-        mViewModel.isLogIn.observe(this, Observer {
-            val isLogin = it ?: false
-            if (isLogin) {
-                layoutLoginField.visibility = View.GONE
-                layoutOTPField.visibility = View.GONE
-                progressLogin.visibility = View.GONE
-            } else {
-                layoutLoginField.visibility = View.VISIBLE
-                layoutOTPField.visibility = View.GONE
-                progressLogin.visibility = View.GONE
+        mViewModel.isLogIn.observe(this, Observer { isLogin ->
+            if (isLogin != null) {
+                loading.visibility = View.GONE
+                if (isLogin) {
+                    layoutLoginField.visibility = View.GONE
+                    layoutOTPField.visibility = View.GONE
+                } else {
+                    layoutLoginField.visibility = View.VISIBLE
+                    layoutOTPField.visibility = View.GONE
+                }
             }
         })
         mViewModel.checkSession(this)
@@ -49,6 +49,8 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
+        btnBack.setOnClickListener { this.finish() }
+
         btnLogin.setOnClickListener {
             val phoneNumber = edtPhoneLogin.text.toString()
             if (phoneNumber.isNotBlank()) {
@@ -59,7 +61,6 @@ class LoginActivity : AppCompatActivity() {
                 mViewModel.shouldSubmitOTP.observe(this, Observer {
                     layoutOTPField.visibility = if (it != null && it) View.VISIBLE else View.GONE
                 })
-
             } else {
                 layoutPhoneLogin.error = "กรุณากรอกเบอร์โทร"
             }

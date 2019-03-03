@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
+import android.view.View
 import android.widget.Toast
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.UserModel
@@ -40,18 +41,20 @@ class UserInfoActivity : AppCompatActivity() {
 
         mViewModel.saveUserInfoResponse.observe(this, Observer { response ->
             if (response != null) {
+                btnBack.isEnabled = true
+                loading.visibility = View.GONE
                 when {
                     response.isSuccessful -> {
                         val intent = Intent(this, ProductActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         this.startActivity(intent)
+                        this.finish()
                     }
-                    response.isCanceled -> {
-                        Toast.makeText(this, "${response.result}", Toast.LENGTH_LONG).show()
-                    }
+                    response.isCanceled -> Toast.makeText(this, "${response.result}", Toast.LENGTH_LONG).show()
                 }
             }
         })
+
+        btnBack.setOnClickListener { this.finish() }
 
         btnSave.setOnClickListener {
             saveUserData()
@@ -59,6 +62,8 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
     private fun saveUserData() {
+        loading.visibility = View.VISIBLE
+        btnBack.isEnabled = false
         val fName = edtFName.text.toString()
         val lName = edtLName.text.toString()
         val phone = edtPhone.text.toString()
@@ -78,6 +83,9 @@ class UserInfoActivity : AppCompatActivity() {
                 this.is_admin = mViewModel.user.value?.is_admin ?: false
             }
             mViewModel.saveUserInfo(userModel)
+        } else {
+            btnBack.isEnabled = true
+            loading.visibility = View.GONE
         }
     }
 

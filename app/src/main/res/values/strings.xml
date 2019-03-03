@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Delivery Coffee Shop</string>
+    <string name="app_name">Nongpreaw Coffee</string>
 
     <string name="orderWaiting">รอคิว</string>
     <string name="orderCooking">กำลังทำ</string>

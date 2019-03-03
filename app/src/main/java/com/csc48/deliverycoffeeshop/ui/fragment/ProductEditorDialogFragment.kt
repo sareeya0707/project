@@ -41,6 +41,10 @@ class ProductEditorDialogFragment : DialogFragment() {
             startActivityForResult(pickIntent, REQUEST_GALLERY_CODE)
         }
 
+        btnClose.setOnClickListener {
+            this.dismiss()
+        }
+
         btnSaveProduct.setOnClickListener {
             saveProductData()
         }
@@ -76,8 +80,8 @@ class ProductEditorDialogFragment : DialogFragment() {
                     }
 
                     Glide.with(this@ProductEditorDialogFragment)
-                        .load(bytes ?: "")
-                        .into(imvProductImage)
+                            .load(bytes ?: "")
+                            .into(imvProductImage)
                 }
             }
     }
