@@ -86,11 +86,13 @@ class MapDialogFragment : DialogFragment(), OnMapReadyCallback {
                             mMap.addMarker(MarkerOptions().position(centerLocation!!).title("Here"))
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centerLocation, 12F))
                         } else {
+                            Log.e(TAG, "getCurrentLocation exception: location is null")
                             callback?.onLocationFail()
                             dialog.dismiss()
                         }
                     }
                     task.isCanceled -> {
+                        Log.e(TAG, "getCurrentLocation exception: ${task.exception?.message}")
                         callback?.onLocationFail()
                         dialog.dismiss()
                     }
