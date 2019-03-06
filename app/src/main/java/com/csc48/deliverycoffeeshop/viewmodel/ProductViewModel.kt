@@ -40,6 +40,15 @@ class ProductViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun getUser() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val ref = database.reference.child("users").child(currentUser.uid)
+            ref.removeEventListener(userListener)
+            ref.addValueEventListener(userListener)
+        }
+    }
+
     private val productListener = object : ValueEventListener {
         override fun onCancelled(databaseError: DatabaseError) {
             Log.d(TAG, "getProducts databaseError : $databaseError")
@@ -61,19 +70,21 @@ class ProductViewModel @Inject constructor() : ViewModel() {
 
     }
 
-    fun getUser() {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val ref = database.reference.child("users").child(currentUser.uid)
-            ref.removeEventListener(userListener)
-            ref.addValueEventListener(userListener)
-        }
-    }
-
     fun getProducts() {
         val ref = database.reference.child("products")
         ref.removeEventListener(productListener)
         ref.addValueEventListener(productListener)
+    }
+
+    fun removeListener() {
+        var ref = database.reference.child("products")
+        ref.removeEventListener(productListener)
+
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            ref = database.reference.child("users").child(currentUser.uid)
+            ref.removeEventListener(userListener)
+        }
     }
 
     fun updateProduct(productModel: ProductModel, byteArray: ByteArray?) {

@@ -21,6 +21,7 @@ class OrderManagementActivity : AppCompatActivity() {
     lateinit var mViewModelFactory: ViewModelFactory
     private lateinit var mViewModel: OrderManagementViewModel
     private var adapter = OrdersAdapter()
+    private var uid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +47,7 @@ class OrderManagementActivity : AppCompatActivity() {
 
         mViewModel.user.observe(this, Observer { user ->
             if (user != null) {
+                uid = user.uid
                 adapter.isAdmin = user.is_admin
                 adapter.notifyDataSetChanged()
 
@@ -53,7 +55,6 @@ class OrderManagementActivity : AppCompatActivity() {
                 else mViewModel.getOrders(user.uid)
             }
         })
-        mViewModel.getUser()
 
         mViewModel.orders.observe(this, Observer { orders ->
             if (orders != null) {
@@ -65,5 +66,15 @@ class OrderManagementActivity : AppCompatActivity() {
         btnBack.setOnClickListener {
             this.finish()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mViewModel.getUser()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mViewModel.removeListener(uid)
     }
 }

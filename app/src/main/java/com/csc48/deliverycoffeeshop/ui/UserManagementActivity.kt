@@ -32,6 +32,8 @@ class UserManagementActivity : AppCompatActivity() {
                 mViewModel.updateUser(userModel)
             }
         })
+        mViewModel.getUsers()
+
         rvUsers.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         rvUsers.setHasFixedSize(true)
         rvUsers.adapter = adapter
@@ -43,10 +45,5 @@ class UserManagementActivity : AppCompatActivity() {
             adapter.mData = users ?: listOf()
             adapter.notifyDataSetChanged()
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mViewModel.getUsers()
     }
 }

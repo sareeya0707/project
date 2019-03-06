@@ -42,12 +42,15 @@ class UsersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val swUserRole = itemView.findViewById<Switch>(R.id.swUserRole)
 
         init {
-            swUserRole.setOnCheckedChangeListener { _, isChecked ->
+            swUserRole.setOnClickListener {
+                val isChecked = swUserRole.isChecked
                 val userModel = mData[adapterPosition].apply {
                     is_admin = isChecked
                 }
                 callback?.onAvailableChange(userModel)
+            }
 
+            swUserRole.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) tvUserRole.text = "ผู้ดูแล"
                 else tvUserRole.text = "ลูกค้า"
             }

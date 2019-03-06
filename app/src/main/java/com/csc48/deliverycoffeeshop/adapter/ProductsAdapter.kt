@@ -61,13 +61,16 @@ class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val swProductAvailable = itemView.findViewById<Switch>(R.id.swProductAvailable)
 
         init {
-            swProductAvailable.setOnCheckedChangeListener { _, isChecked ->
+            swProductAvailable.setOnClickListener {
+                val isChecked = swProductAvailable.isChecked
                 val productModel = mData[adapterPosition].apply {
                     update_at = System.currentTimeMillis()
                     available = isChecked
                 }
                 availableCallback?.onAvailableChange(productModel)
+            }
 
+            swProductAvailable.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) swProductAvailable.text = "เปิดใช้งาน"
                 else swProductAvailable.text = "ปิดใช้งาน"
             }

@@ -26,78 +26,86 @@ class MainViewModel @Inject constructor() : ViewModel() {
         return auth.currentUser != null
     }
 
+    private val productsListener = object : ValueEventListener {
+        override fun onCancelled(databaseError: DatabaseError) {
+            Log.d(TAG, "getProducts databaseError : $databaseError")
+        }
+
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            if (dataSnapshot.hasChildren()) {
+                var list = listOf<ProductModel>()
+                for (data in dataSnapshot.children) {
+                    val product = data.getValue(ProductModel::class.java)
+                    if (product != null && product.available) {
+                        product.key = data.key
+                        list = list + product
+                    }
+                }
+                products.value = list
+            }
+        }
+    }
+
     fun getProducts() {
         val ref = database.reference.child("products")
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.d(TAG, "getProducts databaseError : $databaseError")
-            }
+        ref.removeEventListener(productsListener)
+        ref.addListenerForSingleValueEvent(productsListener)
+    }
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
-                    var list = listOf<ProductModel>()
-                    for (data in dataSnapshot.children) {
-                        val product = data.getValue(ProductModel::class.java)
-                        if (product != null && product.available) {
-                            product.key = data.key
-                            list = list + product
-                        }
+    private val statisticsListener = object : ValueEventListener {
+        override fun onCancelled(databaseError: DatabaseError) {
+            Log.d(TAG, "getStatistic databaseError : $databaseError")
+        }
+
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            if (dataSnapshot.hasChildren()) {
+                var list = listOf<StatisticModel>()
+                for (order in dataSnapshot.children) {
+                    for (product in order.children) {
+                        val statistic = product.getValue(StatisticModel::class.java)
+                        if (statistic != null) list = list + statistic
                     }
-                    products.value = list
                 }
-            }
 
-        })
+                // group สินค้าและรวมจำนวนการสั่งซื้อของสินค้าแต่ละชิ้นจากข้อมูลสถิติที่ Get มาจาก Firebase ด้านบน
+                // **อันนี้พี่ก็ไม่ค่อยรู้วิธีการทำงานเท่าไหร่ บางส่วนเอามาจาก google
+                val sortedList = list.groupBy { it.key }.values.map { s ->
+                    s.reduce { acc, statisticModel ->
+                        StatisticModel(
+                            statisticModel.key,
+                            acc.quantity + statisticModel.quantity
+                        )
+                    }
+                }.sortedBy { it.quantity }.asReversed()
+
+                statistics.value = sortedList
+            }
+        }
+
     }
 
     fun getStatistic() {
         val ref = database.reference.child("product-statistic")
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.d(TAG, "getStatistic databaseError : $databaseError")
-            }
+        ref.removeEventListener(statisticsListener)
+        ref.addListenerForSingleValueEvent(statisticsListener)
+    }
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
-                    var list = listOf<StatisticModel>()
-                    for (order in dataSnapshot.children) {
-                        for (product in order.children) {
-                            val statistic = product.getValue(StatisticModel::class.java)
-                            if (statistic != null) list = list + statistic
-                        }
-                    }
+    private val userListener = object : ValueEventListener {
+        override fun onCancelled(databaseError: DatabaseError) {
+            Log.d(TAG, "getUser databaseError : $databaseError")
+        }
 
-                    // group สินค้าและรวมจำนวนการสั่งซื้อของสินค้าแต่ละชิ้นจากข้อมูลสถิติที่ Get มาจาก Firebase ด้านบน
-                    // **อันนี้พี่ก็ไม่ค่อยรู้วิธีการทำงานเท่าไหร่ บางส่วนเอามาจาก google
-                    val sortedList = list.groupBy { it.key }.values.map { s ->
-                        s.reduce { acc, statisticModel ->
-                            StatisticModel(
-                                statisticModel.key,
-                                acc.quantity + statisticModel.quantity
-                            )
-                        }
-                    }.sortedBy { it.quantity }.asReversed()
-
-                    statistics.value = sortedList
-                }
-            }
-
-        })
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            hasUserData.value = dataSnapshot.hasChildren()
+        }
     }
 
     fun getUser() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val ref = database.reference.child("users").child(currentUser.uid)
-            ref.addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.d(TAG, "getUser databaseError : $databaseError")
-                }
-
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    hasUserData.value = dataSnapshot.hasChildren()
-                }
-            })
+            ref.removeEventListener(userListener)
+            ref.addListenerForSingleValueEvent(userListener)
         }
     }
 }

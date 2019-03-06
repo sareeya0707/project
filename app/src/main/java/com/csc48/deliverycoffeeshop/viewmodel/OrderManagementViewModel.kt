@@ -20,15 +20,6 @@ class OrderManagementViewModel @Inject constructor() : ViewModel() {
     val orders = MutableLiveData<List<OrderModel>>()
     val user = MutableLiveData<UserModel>()
 
-    fun getUser() {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val ref = database.reference.child("users").child(currentUser.uid)
-            ref.removeEventListener(userListener)
-            ref.addValueEventListener(userListener)
-        }
-    }
-
     private val userListener = object : ValueEventListener {
         override fun onCancelled(databaseError: DatabaseError) {
             Log.d(TAG, "getUser databaseError : $databaseError")
@@ -39,10 +30,13 @@ class OrderManagementViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun getOrders(uid: String?) {
-        val ref = database.reference.child("orders")
-        ref.removeEventListener(ordersListener(uid))
-        ref.addValueEventListener(ordersListener(uid))
+    fun getUser() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val ref = database.reference.child("users").child(currentUser.uid)
+            ref.removeEventListener(userListener)
+            ref.addValueEventListener(userListener)
+        }
     }
 
     private fun ordersListener(uid: String?): ValueEventListener = object : ValueEventListener {
@@ -63,6 +57,23 @@ class OrderManagementViewModel @Inject constructor() : ViewModel() {
 
                 orders.value = if (uid != null) list.filter { s -> s.shipping_uid == uid } else list
             }
+        }
+    }
+
+    fun getOrders(uid: String?) {
+        val ref = database.reference.child("orders")
+        ref.removeEventListener(ordersListener(uid))
+        ref.addValueEventListener(ordersListener(uid))
+    }
+
+    fun removeListener(uid: String?) {
+        var ref = database.reference.child("orders")
+        ref.removeEventListener(ordersListener(uid))
+
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            ref = database.reference.child("users").child(currentUser.uid)
+            ref.removeEventListener(userListener)
         }
     }
 }

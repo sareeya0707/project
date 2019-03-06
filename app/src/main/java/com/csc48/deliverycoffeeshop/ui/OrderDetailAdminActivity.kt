@@ -28,7 +28,7 @@ class OrderDetailAdminActivity : AppCompatActivity() {
     private lateinit var mViewModel: OrderDetailAdminViewModel
     private val editable = Editable.Factory.getInstance()
     private val adapter = CartAdapter()
-    private var orderKey: String? = null
+    private var key: String? = null
     private var userRole: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +36,7 @@ class OrderDetailAdminActivity : AppCompatActivity() {
         AndroidInjection.inject(this)
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(OrderDetailAdminViewModel::class.java)
         setContentView(R.layout.activity_order_detail_admin)
-        orderKey = intent.getStringExtra("ORDER_ID")
+        key = intent.getStringExtra("ORDER_ID")
         rvCart.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         rvCart.adapter = adapter
 
@@ -46,14 +46,23 @@ class OrderDetailAdminActivity : AppCompatActivity() {
                 else userRole = user.is_admin
             }
         })
-        mViewModel.getUser()
 
         mViewModel.order.observe(this, Observer { order ->
             if (order != null) initOrderDetail(order)
         })
-        mViewModel.getOrder(orderKey)
 
         initListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mViewModel.getUser()
+        mViewModel.getOrder(key)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mViewModel.removeListener(key)
     }
 
     private fun initListener() {
@@ -74,11 +83,11 @@ class OrderDetailAdminActivity : AppCompatActivity() {
 
         groupStatus.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.btnOrderWaiting -> mViewModel.updateOrderStatus(orderKey, OrderStatus.WAITING)
-                R.id.btnOrderCooking -> mViewModel.updateOrderStatus(orderKey, OrderStatus.COOKING)
-                R.id.btnOrderShipping -> mViewModel.updateOrderStatus(orderKey, OrderStatus.IN_TRANSIT)
-                R.id.btnOrderSuccess -> mViewModel.updateOrderStatus(orderKey, OrderStatus.SUCCESS)
-                R.id.btnOrderCancel -> mViewModel.updateOrderStatus(orderKey, OrderStatus.CANCEL)
+                R.id.btnOrderWaiting -> mViewModel.updateOrderStatus(key, OrderStatus.WAITING)
+                R.id.btnOrderCooking -> mViewModel.updateOrderStatus(key, OrderStatus.COOKING)
+                R.id.btnOrderShipping -> mViewModel.updateOrderStatus(key, OrderStatus.IN_TRANSIT)
+                R.id.btnOrderSuccess -> mViewModel.updateOrderStatus(key, OrderStatus.SUCCESS)
+                R.id.btnOrderCancel -> mViewModel.updateOrderStatus(key, OrderStatus.CANCEL)
             }
         }
     }

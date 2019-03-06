@@ -26,6 +26,7 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
     private lateinit var mViewModel: OrderDetailCustomerViewModel
     private val editable = Editable.Factory.getInstance()
     private val adapter = CartAdapter()
+    private var key: String? = null
     private var userRole: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +34,7 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
         AndroidInjection.inject(this)
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(OrderDetailCustomerViewModel::class.java)
         setContentView(R.layout.activity_order_detail_customer)
-        val key = intent.getStringExtra("ORDER_ID")
+        key = intent.getStringExtra("ORDER_ID")
         rvCart.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         rvCart.adapter = adapter
 
@@ -43,16 +44,25 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
                 else userRole = user.is_admin
             }
         })
-        mViewModel.getUser()
 
         mViewModel.order.observe(this, Observer { order ->
             if (order != null) initOrderDetail(order)
         })
-        mViewModel.getOrder(key)
 
         btnBack.setOnClickListener {
             this.finish()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mViewModel.getUser()
+        mViewModel.getOrder(key)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mViewModel.removeListener(key)
     }
 
     private fun initOrderDetail(order: OrderModel) {

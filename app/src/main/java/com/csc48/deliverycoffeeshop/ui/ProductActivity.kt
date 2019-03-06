@@ -97,14 +97,12 @@ class ProductActivity : AppCompatActivity()
                 }
             }
         })
-        mViewModel.getUser()
 
         mViewModel.products.observe(this, Observer { products ->
             productData = products ?: listOf()
             adapter.mData = productData
             adapter.notifyDataSetChanged()
         })
-        mViewModel.getProducts()
 
         btnBack.setOnClickListener {
             this.finish()
@@ -125,6 +123,17 @@ class ProductActivity : AppCompatActivity()
                 dialog.show(supportFragmentManager, "CustomerConsoleDialogFragment")
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mViewModel.getUser()
+        mViewModel.getProducts()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mViewModel.removeListener()
     }
 
     override fun onAddProduct() {

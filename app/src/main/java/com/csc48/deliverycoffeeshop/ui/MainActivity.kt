@@ -34,11 +34,12 @@ class MainActivity : AppCompatActivity() {
 
         // observe ตัวแปร LiveData แล้วเอาข้อมูลของมันมาใช้ทำอะไรต่างๆ
         mViewModel.products.observe(this, Observer { products ->
-            adapter.mData = products ?: listOf()
-            adapter.notifyDataSetChanged()
-            mViewModel.getStatistic()
+            if (products != null) {
+                adapter.mData = products
+                adapter.notifyDataSetChanged()
+                mViewModel.getStatistic()
+            }
         })
-        mViewModel.getProducts()
 
         mViewModel.statistics.observe(this, Observer { statistics ->
             if (statistics != null) {
@@ -54,6 +55,11 @@ class MainActivity : AppCompatActivity() {
         btnOrder.setOnClickListener {
             userPermissionCheck()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mViewModel.getProducts()
     }
 
     private fun userPermissionCheck() {

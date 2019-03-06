@@ -44,9 +44,11 @@ class UserInfoViewModel @Inject constructor() : ViewModel() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             userModel.uid = currentUser.uid
-            database.reference.child("users").child(currentUser.uid).setValue(userModel).addOnCompleteListener {
-                saveUserInfoResponse.value = it
-            }
+            database.reference.child("users").child(currentUser.uid)
+                .setValue(userModel)
+                .addOnCompleteListener {
+                    saveUserInfoResponse.value = it
+                }
         }
     }
 
