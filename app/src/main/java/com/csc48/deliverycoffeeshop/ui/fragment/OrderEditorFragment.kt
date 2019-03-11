@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.csc48.deliverycoffeeshop.PERMISSIONS_REQUEST_LOCATION
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.CartAdapter
 import com.csc48.deliverycoffeeshop.model.OrderModel
@@ -52,8 +53,6 @@ class OrderEditorFragment : Fragment() {
                 }
             }
         }
-
-        private const val PERMISSIONS_REQUEST_LOCATION = 0
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -156,37 +155,25 @@ class OrderEditorFragment : Fragment() {
 
     private fun checkLocationPermission(): Boolean {
         activity?.run {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
-                ) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                     AlertDialog.Builder(this)
-                        .setTitle("Location Permission Request")
-                        .setMessage("กรุณาเปิดใช้สิทธิ์การเข้าถึง GPS เพื่อใช้งาน")
-                        .setPositiveButton("ตกลง") { _, _ ->
-                            //Prompt the user once explanation has been shown
-                            ActivityCompat.requestPermissions(
-                                this,
-                                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                                PERMISSIONS_REQUEST_LOCATION
-                            )
-                        }
-                        .create()
-                        .show()
+                            .setTitle("Location Permission Request")
+                            .setMessage("กรุณาเปิดใช้สิทธิ์การเข้าถึง GPS เพื่อใช้งาน")
+                            .setPositiveButton("ตกลง") { _, _ ->
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(
+                                        this,
+                                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                                        PERMISSIONS_REQUEST_LOCATION
+                                )
+                            }
+                            .create()
+                            .show()
                 } else {
                     // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        PERMISSIONS_REQUEST_LOCATION
-                    )
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_REQUEST_LOCATION)
                 }
                 return false
             } else {
@@ -204,9 +191,9 @@ class OrderEditorFragment : Fragment() {
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
                     if (ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
+                                    this,
+                                    Manifest.permission.ACCESS_FINE_LOCATION
+                            ) == PackageManager.PERMISSION_GRANTED
                     ) {
                         //Request location updates:
                         showMapDialog()
