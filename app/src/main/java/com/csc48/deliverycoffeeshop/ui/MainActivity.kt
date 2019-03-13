@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                     val hasData = statistics.find { it.key == s.key }
                     if (hasData != null) s.quantity = hasData.quantity
                 }
-                adapter.mData = adapter.mData.sortedBy { it.quantity }
+                adapter.mData = adapter.mData.sortedBy { it.quantity }.asReversed()
                 adapter.notifyDataSetChanged()
             }
         })
