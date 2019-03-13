@@ -43,6 +43,7 @@ class ProductActivity : AppCompatActivity()
     private var productData: List<ProductModel> = listOf()
     private var cart: List<ProductModel> = listOf()
     private var userModel: UserModel? = null
+    private var isAdmin = false
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
         return dispatchingAndroidInjector
@@ -59,6 +60,7 @@ class ProductActivity : AppCompatActivity()
 
         mViewModel.user.observe(this, Observer { user ->
             if (user != null) {
+                isAdmin = user.is_admin
                 rvProducts.adapter = null
                 adapter = ProductsAdapter().apply {
                     isAdmin = user.is_admin
@@ -95,12 +97,13 @@ class ProductActivity : AppCompatActivity()
                         }
                     })
                 }
+                mViewModel.getProducts()
             }
         })
 
         mViewModel.products.observe(this, Observer { products ->
             productData = products ?: listOf()
-            adapter.mData = productData
+            adapter.mData = if (isAdmin) productData else productData.filter { s -> s.available }
             adapter.notifyDataSetChanged()
         })
 
@@ -128,7 +131,6 @@ class ProductActivity : AppCompatActivity()
     override fun onResume() {
         super.onResume()
         mViewModel.getUser()
-        mViewModel.getProducts()
     }
 
     override fun onPause() {
