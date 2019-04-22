@@ -1,42 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/rootItem"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:gravity="center_horizontal"
-              android:layout_margin="8dp"
-              android:background="@android:color/white"
-              android:padding="8dp">
+    android:id="@+id/rootItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="@android:color/white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <ImageView
-            android:id="@+id/imvProductImage"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:minHeight="150dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:background="@android:color/darker_gray"/>
+        android:id="@+id/imvProductImage"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:background="@android:color/darker_gray"
+        android:minHeight="150dp"
+        android:scaleType="centerCrop" />
 
     <TextView
-            android:id="@+id/tvProductName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textColor="@android:color/black"
-            android:textSize="20dp"/>
+        android:id="@+id/tvProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        android:textSize="20dp" />
 
     <TextView
-            android:id="@+id/tvProductPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textColor="@android:color/black"/>
+        android:id="@+id/tvProductPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/black" />
 
     <Button
-            android:id="@+id/btnChooseProduct"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="เลือก"/>
+        android:id="@+id/btnChooseProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/holo_orange_dark"
+        android:text="เลือก" />
 
 </LinearLayout>

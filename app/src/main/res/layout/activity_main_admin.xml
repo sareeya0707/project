@@ -27,10 +27,4 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"/>
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="MAIN_ADMIN"/>
-
 </RelativeLayout>

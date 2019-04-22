@@ -9,28 +9,31 @@ import com.bumptech.glide.Glide
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.ProductModel
 
+
 class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mData: List<ProductModel> = listOf()
     var isAdmin: Boolean = false
 
-    private var selectCallback: OnSelectListener? = null
+    private var customerCallback: OnProductCustomerListener? = null
 
-    private var availableCallback: OnAvailableChangeListener? = null
+    private var adminCallback: OnProductAdminListener? = null
 
-    interface OnSelectListener {
+    interface OnProductCustomerListener {
         fun onSelectItem(productModel: ProductModel)
     }
 
-    interface OnAvailableChangeListener {
+    interface OnProductAdminListener {
         fun onAvailableChange(productModel: ProductModel)
+        fun onEditProduct(productModel: ProductModel)
+        fun onDeleteProduct(productModel: ProductModel)
     }
 
-    fun setOnSelectListener(callback: OnSelectListener) {
-        this.selectCallback = callback
+    fun setOnSelectListener(callback: OnProductCustomerListener) {
+        this.customerCallback = callback
     }
 
-    fun setOnAvailableChangeListener(callback: OnAvailableChangeListener) {
-        this.availableCallback = callback
+    fun setOnAvailableChangeListener(callback: OnProductAdminListener) {
+        this.adminCallback = callback
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -54,11 +57,13 @@ class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     internal inner class AdminViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         private val context = itemView.context
         private val imvProductImage = itemView.findViewById<ImageView>(R.id.imvProductImage)
         private val tvProductName = itemView.findViewById<TextView>(R.id.tvProductName)
         private val tvProductPrice = itemView.findViewById<TextView>(R.id.tvProductPrice)
         private val swProductAvailable = itemView.findViewById<Switch>(R.id.swProductAvailable)
+        private val btnMenu = itemView.findViewById<FrameLayout>(R.id.btnMenu)
 
         init {
             swProductAvailable.setOnClickListener {
@@ -67,19 +72,33 @@ class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     update_at = System.currentTimeMillis()
                     available = isChecked
                 }
-                availableCallback?.onAvailableChange(productModel)
+                adminCallback?.onAvailableChange(productModel)
             }
 
             swProductAvailable.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) swProductAvailable.text = "เปิดใช้งาน"
                 else swProductAvailable.text = "ปิดใช้งาน"
             }
+
+            btnMenu.setOnClickListener {
+                PopupMenu(context, it).apply {
+                    inflate(R.menu.product_menu)
+                    setOnMenuItemClickListener { menu ->
+                        when (menu.itemId) {
+                            R.id.menuEdit -> adminCallback?.onEditProduct(mData[adapterPosition])
+                            R.id.menuDelete -> adminCallback?.onDeleteProduct(mData[adapterPosition])
+                        }
+                        false
+                    }
+                    show()
+                }
+            }
         }
 
         fun bindViews(productModel: ProductModel) {
             Glide.with(context)
-                .load(productModel.image ?: "")
-                .into(imvProductImage)
+                    .load(productModel.image ?: "")
+                    .into(imvProductImage)
 
             tvProductName.text = productModel.name ?: ""
             tvProductPrice.text = productModel.price.toString()
@@ -99,14 +118,14 @@ class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
             btnChooseProduct.setOnClickListener {
                 rootItem.isSelected = !rootItem.isSelected
-                selectCallback?.onSelectItem(mData[adapterPosition])
+                customerCallback?.onSelectItem(mData[adapterPosition])
             }
         }
 
         fun bindViews(productModel: ProductModel) {
             Glide.with(context)
-                .load(productModel.image ?: "")
-                .into(imvProductImage)
+                    .load(productModel.image ?: "")
+                    .into(imvProductImage)
 
             tvProductName.text = productModel.name ?: ""
             tvProductPrice.text = productModel.price.toString()

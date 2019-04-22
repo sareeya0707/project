@@ -23,8 +23,8 @@ class MainActivity : AppCompatActivity() {
     private val adapter = TopProductAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
+        super.onCreate(savedInstanceState)
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel::class.java)
         setContentView(R.layout.activity_main)
 

@@ -26,6 +26,18 @@ class ProductEditorDialogFragment : DialogFragment() {
     private lateinit var mViewModel: ProductViewModel
     private var REQUEST_GALLERY_CODE = 0
     private var bytes: ByteArray? = null
+    private var productModel: ProductModel? = null
+
+    companion object {
+        const val TAG = "ProductEditorDialogFragment"
+        fun newInstance(productModel: ProductModel?): ProductEditorDialogFragment {
+            return ProductEditorDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable("PRODUCT", productModel)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mViewModel = ViewModelProviders.of(this).get(ProductViewModel::class.java)
@@ -34,6 +46,17 @@ class ProductEditorDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        arguments?.getParcelable<ProductModel>("PRODUCT")?.let {
+            productModel = it
+
+            Glide.with(this@ProductEditorDialogFragment)
+                    .load(it.image)
+                    .into(imvProductImage)
+
+            edtProductName.setText(it.name)
+            edtProductPrice.setText(it.price.toString())
+        }
 
         btnChooseImage.setOnClickListener {
             val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -102,12 +125,12 @@ class ProductEditorDialogFragment : DialogFragment() {
 //        }
 
         if (isNameValid && isPriceValid /*&& isImageValid*/) {
-            val productModel = ProductModel().apply {
+            val product = productModel ?: ProductModel()
+            val productModel = product.apply {
                 this.name = name
                 this.price = price.toDouble()
-                this.create_at = System.currentTimeMillis()
+                if (this.create_at == 0L) this.create_at = System.currentTimeMillis()
                 this.update_at = System.currentTimeMillis()
-                this.available = false
             }
             mViewModel.updateProduct(productModel, bytes)
         }

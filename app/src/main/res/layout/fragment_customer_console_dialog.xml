@@ -1,83 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:background="@android:color/white"
-              android:clickable="true"
-              android:focusable="true">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
 
     <RelativeLayout
-            android:id="@+id/btnCartManage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+        android:id="@+id/btnCartManage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ตะกร้าสินค้า"
-                android:textSize="18dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ตะกร้าสินค้า"
+            android:textColor="@android:color/black"
+            android:textSize="18dp" />
     </RelativeLayout>
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
     <RelativeLayout
-            android:id="@+id/btnOrderManage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+        android:id="@+id/btnOrderManage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="รายการสั่งซื้อ"
-                android:textSize="18dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="รายการสั่งซื้อ"
+            android:textColor="@android:color/black"
+            android:textSize="18dp" />
     </RelativeLayout>
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
     <RelativeLayout
-            android:id="@+id/btnUserInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+        android:id="@+id/btnUserInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="แก้ไขข้อมูลส่วนตัว"
-                android:textSize="18dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="แก้ไขข้อมูลส่วนตัว"
+            android:textColor="@android:color/black"
+            android:textSize="18dp" />
     </RelativeLayout>
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
     <RelativeLayout
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ลงชื่อออก"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="18dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ลงชื่อออก"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="18dp" />
     </RelativeLayout>
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
 </LinearLayout>

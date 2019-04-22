@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
@@ -26,13 +27,14 @@ import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_product.*
 import javax.inject.Inject
 
+
 class ProductActivity : AppCompatActivity()
-    , HasSupportFragmentInjector
-    , AdminConsoleDialogFragment.ConsoleListener
-    , CustomerConsoleDialogFragment.ConsoleListener
-    , AddCartFragment.AddCartListener
-    , OrderCartDialogFragment.OrderCartListener
-    , OrderEditorFragment.OrderEditorListener {
+        , HasSupportFragmentInjector
+        , AdminConsoleDialogFragment.ConsoleListener
+        , CustomerConsoleDialogFragment.ConsoleListener
+        , AddCartFragment.AddCartListener
+        , OrderCartDialogFragment.OrderCartListener
+        , OrderEditorFragment.OrderEditorListener {
     private val TAG = ProductActivity::class.java.simpleName
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -73,7 +75,30 @@ class ProductActivity : AppCompatActivity()
                     userModel = null
                     btnAdminConsole.visibility = View.VISIBLE
                     btnCustomerConsole.visibility = View.GONE
-                    adapter.setOnAvailableChangeListener(object : ProductsAdapter.OnAvailableChangeListener {
+                    adapter.setOnAvailableChangeListener(object : ProductsAdapter.OnProductAdminListener {
+                        override fun onEditProduct(productModel: ProductModel) {
+                            if (supportFragmentManager.findFragmentByTag(ProductEditorDialogFragment.TAG) == null) {
+                                val dialog = ProductEditorDialogFragment.newInstance(productModel)
+                                dialog.show(supportFragmentManager, ProductEditorDialogFragment.TAG)
+                            }
+                        }
+
+                        override fun onDeleteProduct(productModel: ProductModel) {
+                            AlertDialog.Builder(this@ProductActivity)
+                                    .setTitle("ลบข้อมูล")
+                                    .setMessage("ต้องการลบสินค้าชิ้นนี้หรือไม่?")
+                                    .setPositiveButton("ลบ") { dialog, which ->
+                                        val product = productModel.apply {
+                                            this.update_at = System.currentTimeMillis()
+                                            this.delete_at = System.currentTimeMillis()
+                                            this.available = false
+                                        }
+                                        mViewModel.updateProduct(product, null)
+                                    }
+                                    .setNegativeButton("ยกเลิก", null)
+                                    .show()
+                        }
+
                         override fun onAvailableChange(productModel: ProductModel) {
                             mViewModel.updateProduct(productModel, null)
                         }
@@ -82,7 +107,7 @@ class ProductActivity : AppCompatActivity()
                     userModel = user
                     btnAdminConsole.visibility = View.GONE
                     btnCustomerConsole.visibility = View.VISIBLE
-                    adapter.setOnSelectListener(object : ProductsAdapter.OnSelectListener {
+                    adapter.setOnSelectListener(object : ProductsAdapter.OnProductCustomerListener {
                         override fun onSelectItem(productModel: ProductModel) {
                             if (supportFragmentManager.findFragmentByTag("AddCartFragment") == null) {
                                 val bundle = Bundle().apply {
@@ -103,7 +128,7 @@ class ProductActivity : AppCompatActivity()
 
         mViewModel.products.observe(this, Observer { products ->
             productData = products ?: listOf()
-            adapter.mData = if (isAdmin) productData else productData.filter { s -> s.available }
+            adapter.mData = if (isAdmin) productData.filter { it.delete_at == null } else productData.filter { it.available || it.delete_at == null }
             adapter.notifyDataSetChanged()
         })
 
@@ -139,9 +164,9 @@ class ProductActivity : AppCompatActivity()
     }
 
     override fun onAddProduct() {
-        if (supportFragmentManager.findFragmentByTag("ProductEditorDialogFragment") == null) {
-            val dialog = ProductEditorDialogFragment()
-            dialog.show(supportFragmentManager, "ProductEditorDialogFragment")
+        if (supportFragmentManager.findFragmentByTag(ProductEditorDialogFragment.TAG) == null) {
+            val dialog = ProductEditorDialogFragment.newInstance(null)
+            dialog.show(supportFragmentManager, ProductEditorDialogFragment.TAG)
         }
     }
 
@@ -192,10 +217,10 @@ class ProductActivity : AppCompatActivity()
             fragment.setOrderEditorListener(this)
 
             supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
-                .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
-                .addToBackStack(null)
-                .commit()
+                    .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+                    .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
+                    .addToBackStack(null)
+                    .commit()
         }
     }
 
