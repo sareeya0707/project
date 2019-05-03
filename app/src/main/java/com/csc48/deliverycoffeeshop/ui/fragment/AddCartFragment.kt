@@ -2,7 +2,6 @@ package com.csc48.deliverycoffeeshop.ui.fragment
 
 
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_add_cart.*
 class AddCartFragment : DialogFragment() {
     private val TAG = CustomerConsoleDialogFragment::class.java.simpleName
     private var callback: AddCartListener? = null
-    private var product: ProductModel? = null
+    private var cartItem: ProductModel? = null
 
     interface AddCartListener {
         fun onAddCart(productModel: ProductModel)
@@ -29,14 +28,25 @@ class AddCartFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        product = arguments?.getParcelable("PRODUCT")
+        val product = arguments?.getParcelable<ProductModel>("PRODUCT")
+        cartItem = ProductModel().apply {
+            key = product?.key
+            name = product?.name
+            price = product?.price ?: 0.0
+            image = product?.image
+            quantity = product?.quantity
+            create_at = product?.create_at ?: 0
+            update_at = product?.update_at ?: 0
+            delete_at = product?.delete_at
+            available = product?.available ?: false
+        }
         return inflater.inflate(R.layout.fragment_add_cart, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        product?.apply {
+        cartItem?.apply {
             Glide.with(this@AddCartFragment)
                 .load(image ?: "")
                 .into(imvProductImage)
@@ -53,13 +63,13 @@ class AddCartFragment : DialogFragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val productPrice = product?.price ?: 0.0
+                val productPrice = cartItem?.price ?: 0.0
                 val text = edtProductQuantity.text.toString()
                 var quantity = 0
                 if (!text.isBlank()) {
                     quantity = Integer.parseInt(text)
                 }
-                product!!.quantity = quantity
+                cartItem?.quantity = quantity
                 val netPrice = productPrice * quantity
                 tvNetPrice.text = netPrice.toString()
             }
@@ -71,9 +81,9 @@ class AddCartFragment : DialogFragment() {
         val quantity = edtProductQuantity.text.toString()
         if (quantity.isNotBlank() && quantity != "0") {
             layoutProductQuantity.error = null
-            if (product != null) {
-                Log.d(TAG, "product: $product")
-                callback?.onAddCart(product!!)
+            if (cartItem != null) {
+                Log.d(TAG, "cart item: $cartItem")
+                callback?.onAddCart(cartItem!!)
                 dismiss()
             }
         } else {
@@ -81,7 +91,7 @@ class AddCartFragment : DialogFragment() {
         }
     }
 
-    private fun checkField(input: String, errorLayout: TextInputLayout, errorText: String): Boolean {
+    /*private fun checkField(input: String, errorLayout: TextInputLayout, errorText: String): Boolean {
         return if (input.isNotBlank()) {
             errorLayout.error = null
             true
@@ -89,6 +99,6 @@ class AddCartFragment : DialogFragment() {
             errorLayout.error = errorText
             false
         }
-    }
+    }*/
 
 }

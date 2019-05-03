@@ -1,10 +1,17 @@
 package com.csc48.deliverycoffeeshop.viewmodel
 
+import android.app.Activity
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.content.Intent
 import android.util.Log
 import com.csc48.deliverycoffeeshop.model.ProductModel
 import com.csc48.deliverycoffeeshop.model.StatisticModel
+import com.csc48.deliverycoffeeshop.model.UserModel
+import com.csc48.deliverycoffeeshop.ui.OrderManagementActivity
+import com.csc48.deliverycoffeeshop.ui.ProductActivity
+import com.csc48.deliverycoffeeshop.ui.UserInfoActivity
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_SENDER
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -20,7 +27,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
     // ตัวแปรแบบ LiveData เอาไว้ให้ Observe ข้อมูล เอามาใช้กับ Firebase เพราะมันต้องรอข้อมูล
     val products = MutableLiveData<List<ProductModel>>()
     val statistics = MutableLiveData<List<StatisticModel>>()
-    val hasUserData = MutableLiveData<Boolean>()
+    //val hasUserData = MutableLiveData<Boolean>()
 
     fun checkSession(): Boolean {
         return auth.currentUser != null
@@ -72,8 +79,8 @@ class MainViewModel @Inject constructor() : ViewModel() {
                 val sortedList = list.groupBy { it.key }.values.map { s ->
                     s.reduce { acc, statisticModel ->
                         StatisticModel(
-                            statisticModel.key,
-                            acc.quantity + statisticModel.quantity
+                                statisticModel.key,
+                                acc.quantity + statisticModel.quantity
                         )
                     }
                 }.sortedBy { it.quantity }.asReversed()
@@ -90,22 +97,59 @@ class MainViewModel @Inject constructor() : ViewModel() {
         ref.addListenerForSingleValueEvent(statisticsListener)
     }
 
-    private val userListener = object : ValueEventListener {
+    private fun userListener(activity: Activity) = object : ValueEventListener {
         override fun onCancelled(databaseError: DatabaseError) {
             Log.d(TAG, "getUser databaseError : $databaseError")
         }
 
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            hasUserData.value = dataSnapshot.hasChildren()
+            //hasUserData.value = dataSnapshot.hasChildren()
+            if (dataSnapshot.hasChildren()) {
+                val user = dataSnapshot.getValue(UserModel::class.java)
+                if (user != null) {
+                    if (user.role != USER_ROLE_SENDER) navigateToProductActivity(activity)
+                    else navigateToOrderManagementActivity(activity)
+                } else navigateToUserInfoActivity(activity)
+            } else navigateToUserInfoActivity(activity)
         }
     }
 
-    fun getUser() {
+    /*private val userListener = object : ValueEventListener {
+        override fun onCancelled(databaseError: DatabaseError) {
+            Log.d(TAG, "getUser databaseError : $databaseError")
+        }
+
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            //hasUserData.value = dataSnapshot.hasChildren()
+            if (dataSnapshot.hasChildren()) {
+
+            } else {
+
+            }
+        }
+    }*/
+
+    fun getUser(activity: Activity) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val ref = database.reference.child("users").child(currentUser.uid)
-            ref.removeEventListener(userListener)
-            ref.addListenerForSingleValueEvent(userListener)
+            ref.removeEventListener(userListener(activity))
+            ref.addListenerForSingleValueEvent(userListener(activity))
         }
+    }
+
+    private fun navigateToProductActivity(activity: Activity) {
+        val intent = Intent(activity, ProductActivity::class.java)
+        activity.startActivity(intent)
+    }
+
+    private fun navigateToOrderManagementActivity(activity: Activity) {
+        val intent = Intent(activity, OrderManagementActivity::class.java)
+        activity.startActivity(intent)
+    }
+
+    private fun navigateToUserInfoActivity(activity: Activity) {
+        val intent = Intent(activity, UserInfoActivity::class.java)
+        activity.startActivity(intent)
     }
 }

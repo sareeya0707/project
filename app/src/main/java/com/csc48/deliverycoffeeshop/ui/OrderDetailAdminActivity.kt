@@ -17,12 +17,10 @@ import android.text.Editable
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.csc48.deliverycoffeeshop.PERMISSIONS_REQUEST_LOCATION
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.CartAdapter
 import com.csc48.deliverycoffeeshop.model.OrderModel
-import com.csc48.deliverycoffeeshop.model.OrderStatus
-import com.csc48.deliverycoffeeshop.safeLet
+import com.csc48.deliverycoffeeshop.utils.*
 import com.csc48.deliverycoffeeshop.viewmodel.OrderDetailAdminViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -51,7 +49,7 @@ class OrderDetailAdminActivity : AppCompatActivity(), OnMapReadyCallback {
     private val adapter = CartAdapter()
     private var key: String? = null
     private var targetLocation: LatLng? = null
-    private var userRole: Boolean? = null
+    private var userRole: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +65,8 @@ class OrderDetailAdminActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mViewModel.user.observe(this, Observer { user ->
             if (user != null) {
-                if (userRole != null && userRole != user.is_admin) this.finish()
-                else userRole = user.is_admin
+                if (userRole != null && userRole != user.role) this.finish()
+                else userRole = user.role
             }
         })
 
@@ -114,22 +112,22 @@ class OrderDetailAdminActivity : AppCompatActivity(), OnMapReadyCallback {
 
         groupStatus.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.btnOrderWaiting -> mViewModel.updateOrderStatus(key, OrderStatus.WAITING)
-                R.id.btnOrderCooking -> mViewModel.updateOrderStatus(key, OrderStatus.COOKING)
-                R.id.btnOrderShipping -> mViewModel.updateOrderStatus(key, OrderStatus.IN_TRANSIT)
-                R.id.btnOrderSuccess -> mViewModel.updateOrderStatus(key, OrderStatus.SUCCESS)
-                R.id.btnOrderCancel -> mViewModel.updateOrderStatus(key, OrderStatus.CANCEL)
+                R.id.btnOrderWaiting -> mViewModel.updateOrderStatus(key, ORDER_STATUS_WAITING)
+                R.id.btnOrderCooking -> mViewModel.updateOrderStatus(key, ORDER_STATUS_COOKING)
+                R.id.btnOrderShipping -> mViewModel.updateOrderStatus(key, ORDER_STATUS_IN_TRANSIT)
+                R.id.btnOrderSuccess -> mViewModel.updateOrderStatus(key, ORDER_STATUS_SUCCESS)
+                R.id.btnOrderCancel -> mViewModel.updateOrderStatus(key, ORDER_STATUS_CANCEL)
             }
         }
     }
 
     private fun initOrderDetail(order: OrderModel) {
         when (order.status) {
-            OrderStatus.WAITING -> groupStatus.check(R.id.btnOrderWaiting)
-            OrderStatus.COOKING -> groupStatus.check(R.id.btnOrderCooking)
-            OrderStatus.IN_TRANSIT -> groupStatus.check(R.id.btnOrderShipping)
-            OrderStatus.SUCCESS -> groupStatus.check(R.id.btnOrderSuccess)
-            OrderStatus.CANCEL -> groupStatus.check(R.id.btnOrderCancel)
+            ORDER_STATUS_WAITING -> groupStatus.check(R.id.btnOrderWaiting)
+            ORDER_STATUS_COOKING -> groupStatus.check(R.id.btnOrderCooking)
+            ORDER_STATUS_IN_TRANSIT -> groupStatus.check(R.id.btnOrderShipping)
+            ORDER_STATUS_SUCCESS -> groupStatus.check(R.id.btnOrderSuccess)
+            ORDER_STATUS_CANCEL -> groupStatus.check(R.id.btnOrderCancel)
         }
 
         edtCustomerName.text = editable.newEditable(order.shipping_name ?: "")

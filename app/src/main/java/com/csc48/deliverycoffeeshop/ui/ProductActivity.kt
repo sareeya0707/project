@@ -18,6 +18,7 @@ import com.csc48.deliverycoffeeshop.model.OrderModel
 import com.csc48.deliverycoffeeshop.model.ProductModel
 import com.csc48.deliverycoffeeshop.model.UserModel
 import com.csc48.deliverycoffeeshop.ui.fragment.*
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_CUSTOMER
 import com.csc48.deliverycoffeeshop.viewmodel.ProductViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -29,12 +30,12 @@ import javax.inject.Inject
 
 
 class ProductActivity : AppCompatActivity()
-        , HasSupportFragmentInjector
-        , AdminConsoleDialogFragment.ConsoleListener
-        , CustomerConsoleDialogFragment.ConsoleListener
-        , AddCartFragment.AddCartListener
-        , OrderCartDialogFragment.OrderCartListener
-        , OrderEditorFragment.OrderEditorListener {
+    , HasSupportFragmentInjector
+    , AdminConsoleDialogFragment.ConsoleListener
+    , CustomerConsoleDialogFragment.ConsoleListener
+    , AddCartFragment.AddCartListener
+    , OrderCartDialogFragment.OrderCartListener
+    , OrderEditorFragment.OrderEditorListener {
     private val TAG = ProductActivity::class.java.simpleName
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -45,7 +46,7 @@ class ProductActivity : AppCompatActivity()
     private var productData: List<ProductModel> = listOf()
     private var cart: List<ProductModel> = listOf()
     private var userModel: UserModel? = null
-    private var isAdmin = false
+    private var userRole: Int = USER_ROLE_CUSTOMER
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
         return dispatchingAndroidInjector
@@ -62,15 +63,15 @@ class ProductActivity : AppCompatActivity()
 
         mViewModel.user.observe(this, Observer { user ->
             if (user != null) {
-                isAdmin = user.is_admin
+                userRole = user.role
                 rvProducts.adapter = null
                 adapter = ProductsAdapter().apply {
-                    isAdmin = user.is_admin
-                    mData = productData
+                    this.userRole = user.role
+                    this.mData = productData
                 }
                 rvProducts.adapter = adapter
 
-                if (user.is_admin) {
+                if (userRole != USER_ROLE_CUSTOMER) {
                     cart = listOf()
                     userModel = null
                     btnAdminConsole.visibility = View.VISIBLE
@@ -85,18 +86,18 @@ class ProductActivity : AppCompatActivity()
 
                         override fun onDeleteProduct(productModel: ProductModel) {
                             AlertDialog.Builder(this@ProductActivity)
-                                    .setTitle("ลบข้อมูล")
-                                    .setMessage("ต้องการลบสินค้าชิ้นนี้หรือไม่?")
-                                    .setPositiveButton("ลบ") { dialog, which ->
-                                        val product = productModel.apply {
-                                            this.update_at = System.currentTimeMillis()
-                                            this.delete_at = System.currentTimeMillis()
-                                            this.available = false
-                                        }
-                                        mViewModel.updateProduct(product, null)
+                                .setTitle("ลบข้อมูล")
+                                .setMessage("ต้องการลบสินค้าชิ้นนี้หรือไม่?")
+                                .setPositiveButton("ลบ") { _, _ ->
+                                    val product = productModel.apply {
+                                        this.update_at = System.currentTimeMillis()
+                                        this.delete_at = System.currentTimeMillis()
+                                        this.available = false
                                     }
-                                    .setNegativeButton("ยกเลิก", null)
-                                    .show()
+                                    mViewModel.updateProduct(product, null)
+                                }
+                                .setNegativeButton("ยกเลิก", null)
+                                .show()
                         }
 
                         override fun onAvailableChange(productModel: ProductModel) {
@@ -128,7 +129,8 @@ class ProductActivity : AppCompatActivity()
 
         mViewModel.products.observe(this, Observer { products ->
             productData = products ?: listOf()
-            adapter.mData = if (isAdmin) productData.filter { it.delete_at == null } else productData.filter { it.available || it.delete_at == null }
+            adapter.mData =
+                if (userRole != USER_ROLE_CUSTOMER) productData.filter { it.delete_at == null } else productData.filter { it.available || it.delete_at == null }
             adapter.notifyDataSetChanged()
         })
 
@@ -203,7 +205,14 @@ class ProductActivity : AppCompatActivity()
 
     override fun onAddCart(productModel: ProductModel) {
         val hasData = cart.find { it.key == productModel.key }
-        cart = if (hasData == null) cart + productModel else (cart - hasData) + productModel
+        if (hasData == null) cart = cart + productModel
+        else {
+            cart = cart - hasData
+            val merged = productModel.apply {
+                this.quantity = (this.quantity ?: 0) + (hasData.quantity ?: 0)
+            }
+            cart = cart + merged
+        }
     }
 
     override fun onClearCart() {
@@ -217,10 +226,10 @@ class ProductActivity : AppCompatActivity()
             fragment.setOrderEditorListener(this)
 
             supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
-                    .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
-                    .addToBackStack(null)
-                    .commit()
+                .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+                .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
+                .addToBackStack(null)
+                .commit()
         }
     }
 

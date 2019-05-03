@@ -8,11 +8,12 @@ import android.widget.*
 import com.bumptech.glide.Glide
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.ProductModel
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_CUSTOMER
 
 
 class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mData: List<ProductModel> = listOf()
-    var isAdmin: Boolean = false
+    var userRole: Int = USER_ROLE_CUSTOMER
 
     private var customerCallback: OnProductCustomerListener? = null
 
@@ -37,7 +38,7 @@ class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (isAdmin) {
+        return if (userRole != USER_ROLE_CUSTOMER) {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_product_manage_item, parent, false)
             AdminViewHolder(view)
         } else {
@@ -48,7 +49,7 @@ class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (isAdmin) (holder as AdminViewHolder).bindViews(mData[position])
+        if (userRole != USER_ROLE_CUSTOMER) (holder as AdminViewHolder).bindViews(mData[position])
         else (holder as CustomerViewHolder).bindViews(mData[position])
     }
 
@@ -57,7 +58,6 @@ class ProductsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     internal inner class AdminViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         private val context = itemView.context
         private val imvProductImage = itemView.findViewById<ImageView>(R.id.imvProductImage)
         private val tvProductName = itemView.findViewById<TextView>(R.id.tvProductName)

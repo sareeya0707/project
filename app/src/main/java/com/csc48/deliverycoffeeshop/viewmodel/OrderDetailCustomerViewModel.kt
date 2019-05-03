@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.csc48.deliverycoffeeshop.model.OrderModel
-import com.csc48.deliverycoffeeshop.model.OrderStatus
 import com.csc48.deliverycoffeeshop.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -71,13 +70,13 @@ class OrderDetailCustomerViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun cancelOrder(orderKey: String?, status: OrderStatus) {
+    fun cancelOrder(orderKey: String?, status: Int) {
         if (orderKey != null) {
             database.reference
-                .child("orders")
-                .child(orderKey)
-                .child("status")
-                .setValue(status)
+                    .child("orders")
+                    .child(orderKey)
+                    .child("status")
+                    .setValue(status)
         }
     }
 }

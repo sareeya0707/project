@@ -9,16 +9,16 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.OrderModel
-import com.csc48.deliverycoffeeshop.model.OrderStatus
+import com.csc48.deliverycoffeeshop.utils.*
 
 class OrdersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mData: List<OrderModel> = listOf()
-    var isAdmin: Boolean = false
+    var userRole: Int = USER_ROLE_CUSTOMER
 
     private var callback: OnSelectListener? = null
 
     interface OnSelectListener {
-        fun onSelectItem(id: String?, isAdmin: Boolean)
+        fun onSelectItem(id: String?, userRole: Int)
     }
 
     fun setOnSelectListener(callback: OnSelectListener) {
@@ -49,7 +49,7 @@ class OrdersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         init {
             rootItem.setOnClickListener {
-                callback?.onSelectItem(mData[adapterPosition].key, isAdmin)
+                callback?.onSelectItem(mData[adapterPosition].key, userRole)
             }
         }
 
@@ -59,23 +59,23 @@ class OrdersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             tvCreateDate.text = DateFormat.format("dd-MM-yyyy hh:mm:ss", orderModel.create_at).toString()
 
             when (orderModel.status) {
-                OrderStatus.WAITING -> {
+                ORDER_STATUS_WAITING -> {
                     tvOrderStatus.text = context.getText(R.string.orderWaiting)
                     layoutOrderStatus.setBackgroundResource(R.color.colorOrderWaiting)
                 }
-                OrderStatus.COOKING -> {
+                ORDER_STATUS_COOKING -> {
                     tvOrderStatus.text = context.getText(R.string.orderCooking)
                     layoutOrderStatus.setBackgroundResource(R.color.colorOrderCooking)
                 }
-                OrderStatus.IN_TRANSIT -> {
+                ORDER_STATUS_IN_TRANSIT -> {
                     tvOrderStatus.text = context.getText(R.string.orderShipping)
                     layoutOrderStatus.setBackgroundResource(R.color.colorOrderShipping)
                 }
-                OrderStatus.SUCCESS -> {
+                ORDER_STATUS_SUCCESS -> {
                     tvOrderStatus.text = context.getText(R.string.orderSuccess)
                     layoutOrderStatus.setBackgroundResource(R.color.colorOrderSuccess)
                 }
-                OrderStatus.CANCEL -> {
+                ORDER_STATUS_CANCEL -> {
                     tvOrderStatus.text = context.getText(R.string.orderCancel)
                     layoutOrderStatus.setBackgroundResource(R.color.colorOrderCancel)
                 }

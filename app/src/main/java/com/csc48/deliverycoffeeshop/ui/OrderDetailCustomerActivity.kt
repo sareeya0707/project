@@ -12,7 +12,8 @@ import android.widget.Toast
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.CartAdapter
 import com.csc48.deliverycoffeeshop.model.OrderModel
-import com.csc48.deliverycoffeeshop.model.OrderStatus
+import com.csc48.deliverycoffeeshop.utils.ORDER_STATUS_CANCEL
+import com.csc48.deliverycoffeeshop.utils.ORDER_STATUS_WAITING
 import com.csc48.deliverycoffeeshop.viewmodel.OrderDetailCustomerViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -27,7 +28,7 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
     private val editable = Editable.Factory.getInstance()
     private val adapter = CartAdapter()
     private var key: String? = null
-    private var userRole: Boolean? = null
+    private var userRole: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +41,8 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
 
         mViewModel.user.observe(this, Observer { user ->
             if (user != null) {
-                if (userRole != null && userRole != user.is_admin) this.finish()
-                else userRole = user.is_admin
+                if (userRole != null && userRole != user.role) this.finish()
+                else userRole = user.role
             }
         })
 
@@ -67,7 +68,7 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
 
     private fun initOrderDetail(order: OrderModel) {
         btnCancelOrder.setOnClickListener {
-            if (order.key != null && order.status == OrderStatus.WAITING) cancelOrderDialog(order.key!!)
+            if (order.key != null && order.status == ORDER_STATUS_WAITING) cancelOrderDialog(order.key!!)
             else Toast.makeText(this, "ไม่สามารถยกเลิกรายการนี้ได้", Toast.LENGTH_SHORT).show()
         }
 
@@ -86,7 +87,7 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this).apply {
             setMessage("ต้องการยกเลิกรายการนี้?")
             setPositiveButton("ยืนยัน") { dialog, _ ->
-                mViewModel.cancelOrder(uid, OrderStatus.CANCEL)
+                mViewModel.cancelOrder(uid, ORDER_STATUS_CANCEL)
                 dialog.dismiss()
             }
             setNegativeButton("ยกเลิก") { dialog, _ ->

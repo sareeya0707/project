@@ -1,62 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/btnUserRole"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toStartOf="@+id/layoutSwitch">
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@android:color/black" />
 
         <TextView
-                android:id="@+id/tvName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:ellipsize="end"
-                android:maxLines="1"/>
-
-        <TextView
-                android:id="@+id/tvPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:ellipsize="end"
-                android:maxLines="1"/>
-
-        <TextView
-                android:id="@+id/tvUid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-            android:id="@+id/layoutSwitch"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvPhone"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="8dp"
-            android:layout_alignParentEnd="true">
-
-        <Switch
-                android:id="@+id/swUserRole"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@android:color/black" />
 
         <TextView
-                android:id="@+id/tvUserRole"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ลูกค้า"
-                android:ellipsize="end"
-                android:textColor="@android:color/black"
-                android:maxLines="1"/>
+            android:id="@+id/tvUid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnUserRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/holo_orange_light" />
 
 </RelativeLayout>

@@ -16,12 +16,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.csc48.deliverycoffeeshop.PERMISSIONS_REQUEST_LOCATION
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.CartAdapter
 import com.csc48.deliverycoffeeshop.model.OrderModel
 import com.csc48.deliverycoffeeshop.model.ProductModel
 import com.csc48.deliverycoffeeshop.model.UserModel
+import com.csc48.deliverycoffeeshop.utils.PERMISSIONS_REQUEST_LOCATION
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.fragment_order_editor.*
 import java.util.*

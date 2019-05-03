@@ -39,11 +39,13 @@ class UserManagementViewModel @Inject constructor() : ViewModel() {
     fun getUsers() {
         val ref = database.reference.child("users")
         ref.removeEventListener(userListener)
-        ref.addValueEventListener(userListener)
+        ref.addListenerForSingleValueEvent(userListener)
     }
 
     fun updateUser(userModel: UserModel) {
         val ref = database.reference.child("users")
-        if (userModel.uid != null) ref.child(userModel.uid!!).setValue(userModel)
+        if (userModel.uid != null) ref.child(userModel.uid!!).setValue(userModel).addOnCompleteListener {
+            getUsers()
+        }
     }
 }

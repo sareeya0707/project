@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.UserModel
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_CUSTOMER
 import com.csc48.deliverycoffeeshop.viewmodel.UserInfoViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -80,7 +81,7 @@ class UserInfoActivity : AppCompatActivity() {
                 this.last_name = lName
                 this.phone_number = phone
                 this.address = address
-                this.is_admin = mViewModel.user.value?.is_admin ?: false
+                this.role = mViewModel.user.value?.role ?: USER_ROLE_CUSTOMER
             }
             mViewModel.saveUserInfo(userModel)
         } else {

@@ -31,11 +31,19 @@ class CartAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val imvProductImage = itemView.findViewById<ImageView>(R.id.imvProductImage)
         private val tvProductName = itemView.findViewById<TextView>(R.id.tvProductName)
         private val tvProductQuantity = itemView.findViewById<TextView>(R.id.tvProductQuantity)
+        private val btnRemoveItem = itemView.findViewById<ImageView>(R.id.btnRemoveItem)
+
+        init {
+            btnRemoveItem.setOnClickListener {
+                mData = mData - mData[adapterPosition]
+                notifyDataSetChanged()
+            }
+        }
 
         fun bindViews(productModel: ProductModel) {
             Glide.with(context)
-                .load(productModel.image ?: "")
-                .into(imvProductImage)
+                    .load(productModel.image ?: "")
+                    .into(imvProductImage)
 
             tvProductName.text = productModel.name ?: ""
 

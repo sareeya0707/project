@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.view.View
 import android.widget.LinearLayout
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.TopProductAdapter
@@ -63,10 +62,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun userPermissionCheck() {
-        loading.visibility = View.VISIBLE
+        //loading.visibility = View.VISIBLE
         val isLogin = mViewModel.checkSession()
         if (isLogin) {
-            mViewModel.hasUserData.observe(this, Observer { isExist ->
+            /*mViewModel.hasUserData.observe(this, Observer { isExist ->
                 if (isExist != null) {
                     loading.visibility = View.GONE
                     if (isExist) {
@@ -78,10 +77,10 @@ class MainActivity : AppCompatActivity() {
                     }
                     mViewModel.hasUserData.value = null
                 }
-            })
-            mViewModel.getUser()
+            })*/
+            mViewModel.getUser(this)
         } else {
-            loading.visibility = View.GONE
+            //loading.visibility = View.GONE
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }

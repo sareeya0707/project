@@ -9,6 +9,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.OrdersAdapter
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_ADMIN
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_CUSTOMER
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_SENDER
 import com.csc48.deliverycoffeeshop.viewmodel.OrderManagementViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -31,15 +34,21 @@ class OrderManagementActivity : AppCompatActivity() {
 
         rvOrders.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         adapter.setOnSelectListener(object : OrdersAdapter.OnSelectListener {
-            override fun onSelectItem(id: String?, isAdmin: Boolean) {
-                if (isAdmin) {
-                    val intent = Intent(this@OrderManagementActivity, OrderDetailAdminActivity::class.java)
-                    intent.putExtra("ORDER_ID", id)
-                    startActivity(intent)
-                } else {
-                    val intent = Intent(this@OrderManagementActivity, OrderDetailCustomerActivity::class.java)
-                    intent.putExtra("ORDER_ID", id)
-                    startActivity(intent)
+            override fun onSelectItem(id: String?, userRole: Int) {
+                when (userRole) {
+                    USER_ROLE_CUSTOMER -> {
+                        val intent = Intent(this@OrderManagementActivity, OrderDetailCustomerActivity::class.java)
+                        intent.putExtra("ORDER_ID", id)
+                        startActivity(intent)
+                    }
+                    USER_ROLE_SENDER -> {
+
+                    }
+                    USER_ROLE_ADMIN -> {
+                        val intent = Intent(this@OrderManagementActivity, OrderDetailAdminActivity::class.java)
+                        intent.putExtra("ORDER_ID", id)
+                        startActivity(intent)
+                    }
                 }
             }
         })
@@ -48,11 +57,13 @@ class OrderManagementActivity : AppCompatActivity() {
         mViewModel.user.observe(this, Observer { user ->
             if (user != null) {
                 uid = user.uid
-                adapter.isAdmin = user.is_admin
+                adapter.userRole = user.role
                 adapter.notifyDataSetChanged()
 
-                if (user.is_admin) mViewModel.getOrders(null)
-                else mViewModel.getOrders(user.uid)
+                when (user.role) {
+                    USER_ROLE_CUSTOMER -> mViewModel.getOrders(user.uid)
+                    else -> mViewModel.getOrders(null)
+                }
             }
         })
 

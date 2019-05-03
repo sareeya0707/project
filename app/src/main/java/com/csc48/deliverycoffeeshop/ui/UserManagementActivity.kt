@@ -28,7 +28,7 @@ class UserManagementActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_management)
 
         adapter.setOnAdminChangeListener(object : UsersAdapter.OnAdminChangeListener {
-            override fun onAvailableChange(userModel: UserModel) {
+            override fun onUserRoleChange(userModel: UserModel) {
                 mViewModel.updateUser(userModel)
             }
         })
