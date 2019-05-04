@@ -5,6 +5,8 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Intent
 import android.util.Log
+import com.csc48.deliverycoffeeshop.di.AppPreference
+import com.csc48.deliverycoffeeshop.model.OpenTimeModel
 import com.csc48.deliverycoffeeshop.model.ProductModel
 import com.csc48.deliverycoffeeshop.model.StatisticModel
 import com.csc48.deliverycoffeeshop.model.UserModel
@@ -19,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(private val appPreference: AppPreference) : ViewModel() {
     private val TAG = MainViewModel::class.java.simpleName
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
@@ -79,8 +81,8 @@ class MainViewModel @Inject constructor() : ViewModel() {
                 val sortedList = list.groupBy { it.key }.values.map { s ->
                     s.reduce { acc, statisticModel ->
                         StatisticModel(
-                                statisticModel.key,
-                                acc.quantity + statisticModel.quantity
+                            statisticModel.key,
+                            acc.quantity + statisticModel.quantity
                         )
                     }
                 }.sortedBy { it.quantity }.asReversed()
@@ -88,7 +90,6 @@ class MainViewModel @Inject constructor() : ViewModel() {
                 statistics.value = sortedList
             }
         }
-
     }
 
     fun getStatistic() {
@@ -135,6 +136,31 @@ class MainViewModel @Inject constructor() : ViewModel() {
             val ref = database.reference.child("users").child(currentUser.uid)
             ref.removeEventListener(userListener(activity))
             ref.addListenerForSingleValueEvent(userListener(activity))
+        }
+    }
+
+    private val openTimeListener = object : ValueEventListener {
+        override fun onCancelled(databaseError: DatabaseError) {
+            Log.d(TAG, "getOpenTime databaseError : $databaseError")
+        }
+
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            if (dataSnapshot.hasChildren()) {
+                val openTime = dataSnapshot.getValue(OpenTimeModel::class.java)
+                if (openTime != null) {
+                    appPreference.saveOpenTime(openTime.open)
+                    appPreference.saveCloseTime(openTime.close)
+                }
+            }
+        }
+    }
+
+    fun getOpenTime() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val ref = database.reference.child("open-time")
+            ref.removeEventListener(openTimeListener)
+            ref.addListenerForSingleValueEvent(openTimeListener)
         }
     }
 

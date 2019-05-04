@@ -11,3 +11,6 @@ const val ORDER_STATUS_COOKING = 1
 const val ORDER_STATUS_IN_TRANSIT = 2
 const val ORDER_STATUS_SUCCESS = 3
 const val ORDER_STATUS_CANCEL = 4
+
+const val OPEN_TIME = "13:30"
+const val CLOSE_TIME = "20:00"

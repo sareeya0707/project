@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.ProductModel
 
-class CartAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CartAdapter constructor(val removable: Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mData: List<ProductModel> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -34,6 +34,8 @@ class CartAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val btnRemoveItem = itemView.findViewById<ImageView>(R.id.btnRemoveItem)
 
         init {
+            btnRemoveItem.visibility = if (removable) View.VISIBLE else View.GONE
+
             btnRemoveItem.setOnClickListener {
                 mData = mData - mData[adapterPosition]
                 notifyDataSetChanged()

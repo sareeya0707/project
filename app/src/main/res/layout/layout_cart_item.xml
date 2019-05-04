@@ -50,6 +50,7 @@
         android:adjustViewBounds="true"
         android:padding="12dp"
         android:scaleType="centerCrop"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_delete" />
 
 </RelativeLayout>

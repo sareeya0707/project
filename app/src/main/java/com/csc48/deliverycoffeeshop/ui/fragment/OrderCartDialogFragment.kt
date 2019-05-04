@@ -16,7 +16,7 @@ import java.util.*
 
 class OrderCartDialogFragment : DialogFragment() {
     private var cart: List<ProductModel> = listOf()
-    private val adapter = CartAdapter()
+    private val adapter = CartAdapter(true)
     private var callback: OrderCartListener? = null
 
     interface OrderCartListener {

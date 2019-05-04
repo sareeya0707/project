@@ -6,8 +6,11 @@ import android.arch.lifecycle.ViewModel
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import com.csc48.deliverycoffeeshop.model.UserModel
+import com.csc48.deliverycoffeeshop.ui.OrderManagementActivity
 import com.csc48.deliverycoffeeshop.ui.ProductActivity
 import com.csc48.deliverycoffeeshop.ui.UserInfoActivity
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_SENDER
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -123,7 +126,15 @@ class LoginViewModel @Inject constructor() : ViewModel() {
             .child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.value == null) {
+                    if (dataSnapshot.hasChildren()) {
+                        val user = dataSnapshot.getValue(UserModel::class.java)
+                        if (user != null) {
+                            if (user.role != USER_ROLE_SENDER) navigateToProductActivity(activity)
+                            else navigateToOrderManagementActivity(activity)
+                        } else navigateToUserInfoActivity(activity)
+                    } else navigateToUserInfoActivity(activity)
+
+                    /*if (dataSnapshot.value == null) {
                         val intent = Intent(activity, UserInfoActivity::class.java)
                         activity.startActivity(intent)
                         activity.finish()
@@ -131,7 +142,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                         val intent = Intent(activity, ProductActivity::class.java)
                         activity.startActivity(intent)
                         activity.finish()
-                    }
+                    }*/
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -142,8 +153,22 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                         Toast.LENGTH_LONG
                     ).show()
                 }
-
             })
+    }
 
+
+    private fun navigateToProductActivity(activity: Activity) {
+        val intent = Intent(activity, ProductActivity::class.java)
+        activity.startActivity(intent)
+    }
+
+    private fun navigateToOrderManagementActivity(activity: Activity) {
+        val intent = Intent(activity, OrderManagementActivity::class.java)
+        activity.startActivity(intent)
+    }
+
+    private fun navigateToUserInfoActivity(activity: Activity) {
+        val intent = Intent(activity, UserInfoActivity::class.java)
+        activity.startActivity(intent)
     }
 }

@@ -26,16 +26,16 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_product.*
+import java.util.*
 import javax.inject.Inject
 
-
 class ProductActivity : AppCompatActivity()
-    , HasSupportFragmentInjector
-    , AdminConsoleDialogFragment.ConsoleListener
-    , CustomerConsoleDialogFragment.ConsoleListener
-    , AddCartFragment.AddCartListener
-    , OrderCartDialogFragment.OrderCartListener
-    , OrderEditorFragment.OrderEditorListener {
+        , HasSupportFragmentInjector
+        , AdminConsoleDialogFragment.ConsoleListener
+        , CustomerConsoleDialogFragment.ConsoleListener
+        , AddCartFragment.AddCartListener
+        , OrderCartDialogFragment.OrderCartListener
+        , OrderEditorFragment.OrderEditorListener {
     private val TAG = ProductActivity::class.java.simpleName
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -57,6 +57,9 @@ class ProductActivity : AppCompatActivity()
         AndroidInjection.inject(this)
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ProductViewModel::class.java)
         setContentView(R.layout.activity_product)
+
+        mViewModel.getOpenTime()
+        checkOpenTime()
 
         rvProducts.layoutManager = GridLayoutManager(this, 2, LinearLayout.VERTICAL, false)
         rvProducts.setHasFixedSize(true)
@@ -86,18 +89,18 @@ class ProductActivity : AppCompatActivity()
 
                         override fun onDeleteProduct(productModel: ProductModel) {
                             AlertDialog.Builder(this@ProductActivity)
-                                .setTitle("ลบข้อมูล")
-                                .setMessage("ต้องการลบสินค้าชิ้นนี้หรือไม่?")
-                                .setPositiveButton("ลบ") { _, _ ->
-                                    val product = productModel.apply {
-                                        this.update_at = System.currentTimeMillis()
-                                        this.delete_at = System.currentTimeMillis()
-                                        this.available = false
+                                    .setTitle("ลบข้อมูล")
+                                    .setMessage("ต้องการลบสินค้าชิ้นนี้หรือไม่?")
+                                    .setPositiveButton("ลบ") { _, _ ->
+                                        val product = productModel.apply {
+                                            this.update_at = System.currentTimeMillis()
+                                            this.delete_at = System.currentTimeMillis()
+                                            this.available = false
+                                        }
+                                        mViewModel.updateProduct(product, null)
                                     }
-                                    mViewModel.updateProduct(product, null)
-                                }
-                                .setNegativeButton("ยกเลิก", null)
-                                .show()
+                                    .setNegativeButton("ยกเลิก", null)
+                                    .show()
                         }
 
                         override fun onAvailableChange(productModel: ProductModel) {
@@ -130,7 +133,7 @@ class ProductActivity : AppCompatActivity()
         mViewModel.products.observe(this, Observer { products ->
             productData = products ?: listOf()
             adapter.mData =
-                if (userRole != USER_ROLE_CUSTOMER) productData.filter { it.delete_at == null } else productData.filter { it.available || it.delete_at == null }
+                    if (userRole != USER_ROLE_CUSTOMER) productData.filter { it.delete_at == null } else productData.filter { it.available || it.delete_at == null }
             adapter.notifyDataSetChanged()
         })
 
@@ -221,16 +224,41 @@ class ProductActivity : AppCompatActivity()
     }
 
     override fun onOrderEditor() {
-        if (supportFragmentManager.findFragmentByTag(OrderEditorFragment.TAG) == null) {
-            val fragment = OrderEditorFragment.newInstance(userModel, cart)
-            fragment.setOrderEditorListener(this)
+        if (checkOpenTime()) {
+            if (supportFragmentManager.findFragmentByTag(OrderEditorFragment.TAG) == null) {
+                val fragment = OrderEditorFragment.newInstance(userModel, cart)
+                fragment.setOrderEditorListener(this)
 
-            supportFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
-                .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
-                .addToBackStack(null)
-                .commit()
+                supportFragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+                        .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
+                        .addToBackStack(null)
+                        .commit()
+            }
+        } else {
+            Toast.makeText(this, "ไม่อยู่ในช่วงเวลาให้บริการ (${mViewModel.openTime}-${mViewModel.closeTime})", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun checkOpenTime(): Boolean {
+        val calendarCurrent = Calendar.getInstance()
+        val calendarOpen = Calendar.getInstance()
+        val calendarClose = Calendar.getInstance()
+        val open = mViewModel.openTime.split(":".toRegex())
+        val close = mViewModel.closeTime.split(":".toRegex())
+        return if (open.size >= 2 && close.size >= 2) {
+            calendarOpen.set(Calendar.HOUR_OF_DAY, Integer.parseInt(open[0]))
+            calendarOpen.set(Calendar.MINUTE, Integer.parseInt(open[1]))
+            calendarOpen.set(Calendar.SECOND, 0)
+            calendarOpen.set(Calendar.MILLISECOND, 0)
+
+            calendarClose.set(Calendar.HOUR_OF_DAY, Integer.parseInt(close[0]))
+            calendarClose.set(Calendar.MINUTE, Integer.parseInt(close[1]))
+            calendarClose.set(Calendar.SECOND, 0)
+            calendarClose.set(Calendar.MILLISECOND, 0)
+
+            calendarCurrent.timeInMillis in calendarOpen.timeInMillis..calendarClose.timeInMillis
+        } else false
     }
 
     override fun onCreateOrder(orderModel: OrderModel) {

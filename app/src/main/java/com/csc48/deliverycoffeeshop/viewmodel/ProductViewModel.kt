@@ -5,11 +5,14 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Intent
 import android.util.Log
+import com.csc48.deliverycoffeeshop.di.AppPreference
 import com.csc48.deliverycoffeeshop.model.OrderModel
 import com.csc48.deliverycoffeeshop.model.ProductModel
 import com.csc48.deliverycoffeeshop.model.StatisticModel
 import com.csc48.deliverycoffeeshop.model.UserModel
 import com.csc48.deliverycoffeeshop.ui.MainActivity
+import com.csc48.deliverycoffeeshop.utils.CLOSE_TIME
+import com.csc48.deliverycoffeeshop.utils.OPEN_TIME
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -19,7 +22,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
-class ProductViewModel @Inject constructor() : ViewModel() {
+class ProductViewModel @Inject constructor(private val appPreference: AppPreference) : ViewModel() {
     private val TAG = ProductViewModel::class.java.simpleName
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
@@ -29,6 +32,9 @@ class ProductViewModel @Inject constructor() : ViewModel() {
     val updateProductResponse = MutableLiveData<Task<Void>>()
     val updateOrderResponse = MutableLiveData<Task<Void>>()
     val user = MutableLiveData<UserModel>()
+
+    var openTime: String = OPEN_TIME
+    var closeTime: String = CLOSE_TIME
 
     private val userListener = object : ValueEventListener {
         override fun onCancelled(databaseError: DatabaseError) {
@@ -47,6 +53,11 @@ class ProductViewModel @Inject constructor() : ViewModel() {
             ref.removeEventListener(userListener)
             ref.addValueEventListener(userListener)
         }
+    }
+
+    fun getOpenTime() {
+        openTime = appPreference.getOpenTime() ?: OPEN_TIME
+        closeTime = appPreference.getCloseTime() ?: CLOSE_TIME
     }
 
     private val productListener = object : ValueEventListener {

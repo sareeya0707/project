@@ -15,6 +15,7 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
+
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mViewModel.getProducts()
+        mViewModel.getOpenTime()
     }
 
     private fun userPermissionCheck() {
