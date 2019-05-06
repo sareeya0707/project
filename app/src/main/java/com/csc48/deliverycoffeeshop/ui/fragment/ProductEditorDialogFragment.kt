@@ -2,8 +2,6 @@ package com.csc48.deliverycoffeeshop.ui.fragment
 
 
 import android.app.Activity.RESULT_OK
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -13,20 +11,27 @@ import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.ProductModel
-import com.csc48.deliverycoffeeshop.viewmodel.ProductViewModel
 import kotlinx.android.synthetic.main.fragment_product_editor_dialog.*
 import java.io.ByteArrayOutputStream
 
 class ProductEditorDialogFragment : DialogFragment() {
     private val TAG = ProductEditorDialogFragment::class.java.simpleName
-    private lateinit var mViewModel: ProductViewModel
     private var REQUEST_GALLERY_CODE = 0
     private var bytes: ByteArray? = null
     private var productModel: ProductModel? = null
+    private var callback: ProductEditorListener? = null
+
+    interface ProductEditorListener {
+        fun onUpdateProduct(productModel: ProductModel, bytes: ByteArray?)
+        fun onClearResponse()
+    }
+
+    fun setProductEditorListener(callback: ProductEditorListener) {
+        this.callback = callback
+    }
 
     companion object {
         const val TAG = "ProductEditorDialogFragment"
@@ -40,7 +45,6 @@ class ProductEditorDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mViewModel = ViewModelProviders.of(this).get(ProductViewModel::class.java)
         return inflater.inflate(R.layout.fragment_product_editor_dialog, container, false)
     }
 
@@ -71,20 +75,10 @@ class ProductEditorDialogFragment : DialogFragment() {
         btnSaveProduct.setOnClickListener {
             saveProductData()
         }
-
-        mViewModel.updateProductResponse.value = null
-        mViewModel.updateProductResponse.observe(this, Observer {
-            it?.also { response ->
-                when {
-                    response.isSuccessful -> dialog.dismiss()
-                    response.isCanceled -> Toast.makeText(context, "คำขอไม่สำเร็จ", Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
     }
 
     override fun onDestroy() {
-        mViewModel.updateProductResponse.value = null
+        callback?.onClearResponse()
         super.onDestroy()
     }
 
@@ -132,7 +126,8 @@ class ProductEditorDialogFragment : DialogFragment() {
                 if (this.create_at == 0L) this.create_at = System.currentTimeMillis()
                 this.update_at = System.currentTimeMillis()
             }
-            mViewModel.updateProduct(productModel, bytes)
+
+            callback?.onUpdateProduct(productModel, bytes)
         }
     }
 

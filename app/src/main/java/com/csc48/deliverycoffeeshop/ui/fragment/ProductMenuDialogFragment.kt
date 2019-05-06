@@ -13,8 +13,6 @@ import kotlinx.android.synthetic.main.fragment_product_menu_dialog.*
 class ProductMenuDialogFragment : DialogFragment() {
     private var product: ProductModel? = null
 
-    
-
     companion object {
         const val TAG = "ProductMenuDialogFragment"
         fun newInstance(productModel: ProductModel): ProductMenuDialogFragment {
