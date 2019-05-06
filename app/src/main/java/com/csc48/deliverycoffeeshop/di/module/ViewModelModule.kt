@@ -55,6 +55,11 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(OrderDetailSenderViewModel::class)
+    abstract fun bindOrderDetailSenderViewModel(orderDetailSenderViewModel: OrderDetailSenderViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(UserManagementViewModel::class)
     abstract fun bindUserManagementViewModel(userManagementViewModel: UserManagementViewModel): ViewModel
 }

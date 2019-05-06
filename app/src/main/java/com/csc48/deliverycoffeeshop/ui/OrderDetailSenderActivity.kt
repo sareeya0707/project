@@ -13,18 +13,19 @@ import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.CartAdapter
 import com.csc48.deliverycoffeeshop.model.OrderModel
 import com.csc48.deliverycoffeeshop.utils.ORDER_STATUS_CANCEL
+import com.csc48.deliverycoffeeshop.utils.ORDER_STATUS_SUCCESS
 import com.csc48.deliverycoffeeshop.utils.ORDER_STATUS_WAITING
-import com.csc48.deliverycoffeeshop.viewmodel.OrderDetailCustomerViewModel
+import com.csc48.deliverycoffeeshop.viewmodel.OrderDetailSenderViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_order_detail_customer.*
+import kotlinx.android.synthetic.main.activity_order_detail_sender.*
 import javax.inject.Inject
 
-class OrderDetailCustomerActivity : AppCompatActivity() {
-    private val TAG = OrderDetailCustomerActivity::class.java.simpleName
+class OrderDetailSenderActivity : AppCompatActivity() {
+    private val TAG = OrderDetailSenderActivity::class.java.simpleName
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
-    private lateinit var mViewModel: OrderDetailCustomerViewModel
+    private lateinit var mViewModel: OrderDetailSenderViewModel
     private val editable = Editable.Factory.getInstance()
     private val adapter = CartAdapter()
     private var key: String? = null
@@ -33,8 +34,9 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(OrderDetailCustomerViewModel::class.java)
-        setContentView(R.layout.activity_order_detail_customer)
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(OrderDetailSenderViewModel::class.java)
+        setContentView(R.layout.activity_order_detail_sender)
+
         key = intent.getStringExtra("ORDER_ID")
         rvCart.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         rvCart.adapter = adapter
@@ -67,6 +69,11 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
     }
 
     private fun initOrderDetail(order: OrderModel) {
+        btnSuccessOrder.setOnClickListener {
+            if (order.key != null && order.status != ORDER_STATUS_SUCCESS) successOrderDialog(order.key!!)
+            else Toast.makeText(this, "ไม่สามารถทำรายการได้", Toast.LENGTH_SHORT).show()
+        }
+
         btnCancelOrder.setOnClickListener {
             if (order.key != null && order.status == ORDER_STATUS_WAITING) cancelOrderDialog(order.key!!)
             else Toast.makeText(this, "ไม่สามารถยกเลิกรายการนี้ได้", Toast.LENGTH_SHORT).show()
@@ -83,11 +90,25 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
+    private fun successOrderDialog(orderKey: String) {
+        val builder = AlertDialog.Builder(this).apply {
+            setMessage("ยืนยันการสำเร็จรายการนี้?")
+            setPositiveButton("ยืนยัน") { dialog, _ ->
+                mViewModel.updateOrderStatus(this@OrderDetailSenderActivity,orderKey, ORDER_STATUS_SUCCESS)
+                dialog.dismiss()
+            }
+            setNegativeButton("ยกเลิก") { dialog, _ ->
+                dialog.dismiss()
+            }
+        }
+        builder.show()
+    }
+
     private fun cancelOrderDialog(orderKey: String) {
         val builder = AlertDialog.Builder(this).apply {
             setMessage("ต้องการยกเลิกรายการนี้?")
             setPositiveButton("ยืนยัน") { dialog, _ ->
-                mViewModel.cancelOrder(orderKey, ORDER_STATUS_CANCEL)
+                mViewModel.updateOrderStatus(this@OrderDetailSenderActivity,orderKey, ORDER_STATUS_CANCEL)
                 dialog.dismiss()
             }
             setNegativeButton("ยกเลิก") { dialog, _ ->

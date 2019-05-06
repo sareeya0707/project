@@ -47,44 +47,44 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     fun loginWithPhoneNumber(activity: Activity, phoneNumber: String) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            phoneNumber,
-            60,
-            TimeUnit.SECONDS,
-            activity, object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
-                    mPhoneAuthCredential = phoneAuthCredential
+                phoneNumber,
+                60,
+                TimeUnit.SECONDS,
+                activity, object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
+                mPhoneAuthCredential = phoneAuthCredential
 //                    shouldShowLoadingDialog.setValue(true)
-                    signInWithPhoneAuthCredential(activity, phoneAuthCredential)
-                }
+                signInWithPhoneAuthCredential(activity, phoneAuthCredential)
+            }
 
-                override fun onVerificationFailed(e: FirebaseException) {
-                    Log.w(TAG, "onVerificationFailed", e)
-                    mPhoneAuthCredential = null
+            override fun onVerificationFailed(e: FirebaseException) {
+                Log.w(TAG, "onVerificationFailed", e)
+                mPhoneAuthCredential = null
 //                    shouldShowLoadingDialog.setValue(false)
 
-                    Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_LONG)
+                Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_LONG)
                         .show()
-                    if (e is FirebaseAuthInvalidCredentialsException) {
-                        Log.e(TAG, "invalid request: ${e.getLocalizedMessage()}")
-                    } else if (e is FirebaseTooManyRequestsException) {
-                        Log.e(TAG, "SMS quota has been exceed!")
-                    }
+                if (e is FirebaseAuthInvalidCredentialsException) {
+                    Log.e(TAG, "invalid request: ${e.getLocalizedMessage()}")
+                } else if (e is FirebaseTooManyRequestsException) {
+                    Log.e(TAG, "SMS quota has been exceed!")
                 }
+            }
 
-                override fun onCodeSent(
+            override fun onCodeSent(
                     verificationId: String?,
                     token: PhoneAuthProvider.ForceResendingToken?
-                ) {
-                    Toast.makeText(
+            ) {
+                Toast.makeText(
                         activity,
                         "รหัสยืนยันได้ถูกส่งไปยังโทรศัพท์ของคุณแล้ว กรุณารอสักครู่",
                         Toast.LENGTH_LONG
-                    ).show()
-                    mVerificationId = verificationId
-                    mResendToken = token
-                    shouldSubmitOTP.value = true
-                }
-            })
+                ).show()
+                mVerificationId = verificationId
+                mResendToken = token
+                shouldSubmitOTP.value = true
+            }
+        })
     }
 
     fun enterPhoneLoginOTP(activity: Activity, code: String) {
@@ -96,20 +96,20 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     fun signInWithPhoneAuthCredential(activity: Activity, phoneAuthCredential: PhoneAuthCredential) {
         auth.signInWithCredential(phoneAuthCredential)
-            .addOnCompleteListener(activity) { task ->
-                if (task.isSuccessful) {
-                    checkUserInformation(task.result?.user!!.uid, activity)
-                } else {
-                    if (task.exception != null) {
-                        Toast.makeText(
-                            activity,
-                            "signInWithPhoneAuthCredential: ${getVerifyCodeErrorMessage(task.exception!!.localizedMessage)}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                .addOnCompleteListener(activity) { task ->
+                    if (task.isSuccessful) {
+                        checkUserInformation(task.result?.user!!.uid, activity)
+                    } else {
+                        if (task.exception != null) {
+                            Toast.makeText(
+                                    activity,
+                                    "signInWithPhoneAuthCredential: ${getVerifyCodeErrorMessage(task.exception!!.localizedMessage)}",
+                                    Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        Log.w(TAG, "signInWithCredential failure! ", task.exception)
                     }
-                    Log.w(TAG, "signInWithCredential failure! ", task.exception)
                 }
-            }
     }
 
     private fun getVerifyCodeErrorMessage(raw: String): String {
@@ -121,54 +121,58 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun checkUserInformation(uid: String, activity: Activity) {
-        database
-            .getReference("users")
-            .child(uid)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.hasChildren()) {
-                        val user = dataSnapshot.getValue(UserModel::class.java)
-                        if (user != null) {
-                            if (user.role != USER_ROLE_SENDER) navigateToProductActivity(activity)
-                            else navigateToOrderManagementActivity(activity)
+        database.getReference("users")
+                .child(uid)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.hasChildren()) {
+                            val user = dataSnapshot.getValue(UserModel::class.java)
+                            if (user != null) {
+                                if (user.role != USER_ROLE_SENDER) navigateToProductActivity(activity)
+                                else navigateToOrderManagementActivity(activity)
+                            } else navigateToUserInfoActivity(activity)
                         } else navigateToUserInfoActivity(activity)
-                    } else navigateToUserInfoActivity(activity)
 
-                    /*if (dataSnapshot.value == null) {
-                        val intent = Intent(activity, UserInfoActivity::class.java)
-                        activity.startActivity(intent)
-                        activity.finish()
-                    } else {
-                        val intent = Intent(activity, ProductActivity::class.java)
-                        activity.startActivity(intent)
-                        activity.finish()
-                    }*/
-                }
+                        /*if (dataSnapshot.value == null) {
+                            val intent = Intent(activity, UserInfoActivity::class.java)
+                            activity.startActivity(intent)
+                            activity.finish()
+                        } else {
+                            val intent = Intent(activity, ProductActivity::class.java)
+                            activity.startActivity(intent)
+                            activity.finish()
+                        }*/
+                    }
 
-                override fun onCancelled(databaseError: DatabaseError) {
+                    override fun onCancelled(databaseError: DatabaseError) {
 //                    shouldShowLoadingDialog.setValue(false)
-                    Toast.makeText(
-                        activity,
-                        "checkUserInformation: ${databaseError.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            })
+                        Toast.makeText(
+                                activity,
+                                "checkUserInformation: ${databaseError.message}",
+                                Toast.LENGTH_LONG
+                        ).show()
+                    }
+                })
     }
 
 
     private fun navigateToProductActivity(activity: Activity) {
         val intent = Intent(activity, ProductActivity::class.java)
         activity.startActivity(intent)
+        activity.finish()
+
     }
 
     private fun navigateToOrderManagementActivity(activity: Activity) {
         val intent = Intent(activity, OrderManagementActivity::class.java)
         activity.startActivity(intent)
+        activity.finish()
     }
 
     private fun navigateToUserInfoActivity(activity: Activity) {
         val intent = Intent(activity, UserInfoActivity::class.java)
+        intent.putExtra("TO_REGISTER", true)
         activity.startActivity(intent)
+        activity.finish()
     }
 }

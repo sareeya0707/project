@@ -31,5 +31,8 @@ abstract class ActivityModule {
     abstract fun contributeOrderDetailAdminActivity(): OrderDetailAdminActivity
 
     @ContributesAndroidInjector()
+    abstract fun contributeOrderDetailSenderActivity(): OrderDetailSenderActivity
+
+    @ContributesAndroidInjector()
     abstract fun contributeUserManagementActivity(): UserManagementActivity
 }

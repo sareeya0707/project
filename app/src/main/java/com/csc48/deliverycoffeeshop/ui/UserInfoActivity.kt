@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.model.UserModel
 import com.csc48.deliverycoffeeshop.utils.USER_ROLE_CUSTOMER
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_SENDER
 import com.csc48.deliverycoffeeshop.viewmodel.UserInfoViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -23,15 +24,19 @@ class UserInfoActivity : AppCompatActivity() {
     lateinit var mViewModelFactory: ViewModelFactory
     private lateinit var mViewModel: UserInfoViewModel
     private val editable = Editable.Factory.getInstance()
+    private var userRole: Int = USER_ROLE_CUSTOMER
+    private var toRegister: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(UserInfoViewModel::class.java)
         setContentView(R.layout.activity_user_info)
+        toRegister = intent.getBooleanExtra("TO_REGISTER", false)
 
         mViewModel.user.observe(this, Observer { user ->
             if (user != null) {
+                userRole = user.role
                 edtFName.text = editable.newEditable(user.first_name ?: "")
                 edtLName.text = editable.newEditable(user.last_name ?: "")
                 edtPhone.text = editable.newEditable(user.phone_number ?: "")
@@ -46,8 +51,12 @@ class UserInfoActivity : AppCompatActivity() {
                 loading.visibility = View.GONE
                 when {
                     response.isSuccessful -> {
-                        val intent = Intent(this, ProductActivity::class.java)
-                        this.startActivity(intent)
+                        if (toRegister) {
+                            val intent =
+                                    if (userRole != USER_ROLE_SENDER) Intent(this, ProductActivity::class.java)
+                                    else Intent(this, OrderManagementActivity::class.java)
+                            this.startActivity(intent)
+                        }
                         this.finish()
                     }
                     response.isCanceled -> Toast.makeText(this, "${response.result}", Toast.LENGTH_LONG).show()

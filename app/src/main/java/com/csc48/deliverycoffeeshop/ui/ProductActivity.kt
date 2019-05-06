@@ -18,7 +18,9 @@ import com.csc48.deliverycoffeeshop.model.OrderModel
 import com.csc48.deliverycoffeeshop.model.ProductModel
 import com.csc48.deliverycoffeeshop.model.UserModel
 import com.csc48.deliverycoffeeshop.ui.fragment.*
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_ADMIN
 import com.csc48.deliverycoffeeshop.utils.USER_ROLE_CUSTOMER
+import com.csc48.deliverycoffeeshop.utils.USER_ROLE_SENDER
 import com.csc48.deliverycoffeeshop.viewmodel.ProductViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
@@ -30,12 +32,12 @@ import java.util.*
 import javax.inject.Inject
 
 class ProductActivity : AppCompatActivity()
-        , HasSupportFragmentInjector
-        , AdminConsoleDialogFragment.ConsoleListener
-        , CustomerConsoleDialogFragment.ConsoleListener
-        , AddCartFragment.AddCartListener
-        , OrderCartDialogFragment.OrderCartListener
-        , OrderEditorFragment.OrderEditorListener {
+    , HasSupportFragmentInjector
+    , AdminConsoleDialogFragment.ConsoleListener
+    , CustomerConsoleDialogFragment.ConsoleListener
+    , AddCartFragment.AddCartListener
+    , OrderCartDialogFragment.OrderCartListener
+    , OrderEditorFragment.OrderEditorListener {
     private val TAG = ProductActivity::class.java.simpleName
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -74,21 +76,22 @@ class ProductActivity : AppCompatActivity()
                 }
                 rvProducts.adapter = adapter
 
-                if (userRole != USER_ROLE_CUSTOMER) {
-                    cart = listOf()
-                    userModel = null
-                    btnAdminConsole.visibility = View.VISIBLE
-                    btnCustomerConsole.visibility = View.GONE
-                    adapter.setOnAvailableChangeListener(object : ProductsAdapter.OnProductAdminListener {
-                        override fun onEditProduct(productModel: ProductModel) {
-                            if (supportFragmentManager.findFragmentByTag(ProductEditorDialogFragment.TAG) == null) {
-                                val dialog = ProductEditorDialogFragment.newInstance(productModel)
-                                dialog.show(supportFragmentManager, ProductEditorDialogFragment.TAG)
+                when (userRole) {
+                    USER_ROLE_ADMIN -> {
+                        cart = listOf()
+                        userModel = null
+                        btnAdminConsole.visibility = View.VISIBLE
+                        btnCustomerConsole.visibility = View.GONE
+                        adapter.setOnAvailableChangeListener(object : ProductsAdapter.OnProductAdminListener {
+                            override fun onEditProduct(productModel: ProductModel) {
+                                if (supportFragmentManager.findFragmentByTag(ProductEditorDialogFragment.TAG) == null) {
+                                    val dialog = ProductEditorDialogFragment.newInstance(productModel)
+                                    dialog.show(supportFragmentManager, ProductEditorDialogFragment.TAG)
+                                }
                             }
-                        }
 
-                        override fun onDeleteProduct(productModel: ProductModel) {
-                            AlertDialog.Builder(this@ProductActivity)
+                            override fun onDeleteProduct(productModel: ProductModel) {
+                                AlertDialog.Builder(this@ProductActivity)
                                     .setTitle("ลบข้อมูล")
                                     .setMessage("ต้องการลบสินค้าชิ้นนี้หรือไม่?")
                                     .setPositiveButton("ลบ") { _, _ ->
@@ -101,30 +104,33 @@ class ProductActivity : AppCompatActivity()
                                     }
                                     .setNegativeButton("ยกเลิก", null)
                                     .show()
-                        }
-
-                        override fun onAvailableChange(productModel: ProductModel) {
-                            mViewModel.updateProduct(productModel, null)
-                        }
-                    })
-                } else {
-                    userModel = user
-                    btnAdminConsole.visibility = View.GONE
-                    btnCustomerConsole.visibility = View.VISIBLE
-                    adapter.setOnSelectListener(object : ProductsAdapter.OnProductCustomerListener {
-                        override fun onSelectItem(productModel: ProductModel) {
-                            if (supportFragmentManager.findFragmentByTag("AddCartFragment") == null) {
-                                val bundle = Bundle().apply {
-                                    putParcelable("PRODUCT", productModel)
-                                }
-                                val dialog = AddCartFragment().apply {
-                                    arguments = bundle
-                                    setAddCartListener(this@ProductActivity)
-                                }
-                                dialog.show(supportFragmentManager, "AddCartFragment")
                             }
-                        }
-                    })
+
+                            override fun onAvailableChange(productModel: ProductModel) {
+                                mViewModel.updateProduct(productModel, null)
+                            }
+                        })
+                    }
+                    USER_ROLE_CUSTOMER -> {
+                        userModel = user
+                        btnAdminConsole.visibility = View.GONE
+                        btnCustomerConsole.visibility = View.VISIBLE
+                        adapter.setOnSelectListener(object : ProductsAdapter.OnProductCustomerListener {
+                            override fun onSelectItem(productModel: ProductModel) {
+                                if (supportFragmentManager.findFragmentByTag("AddCartFragment") == null) {
+                                    val bundle = Bundle().apply {
+                                        putParcelable("PRODUCT", productModel)
+                                    }
+                                    val dialog = AddCartFragment().apply {
+                                        arguments = bundle
+                                        setAddCartListener(this@ProductActivity)
+                                    }
+                                    dialog.show(supportFragmentManager, "AddCartFragment")
+                                }
+                            }
+                        })
+                    }
+                    USER_ROLE_SENDER -> this.finish()
                 }
                 mViewModel.getProducts()
             }
@@ -133,7 +139,7 @@ class ProductActivity : AppCompatActivity()
         mViewModel.products.observe(this, Observer { products ->
             productData = products ?: listOf()
             adapter.mData =
-                    if (userRole != USER_ROLE_CUSTOMER) productData.filter { it.delete_at == null } else productData.filter { it.available || it.delete_at == null }
+                if (userRole != USER_ROLE_CUSTOMER) productData.filter { it.delete_at == null } else productData.filter { it.available || it.delete_at == null }
             adapter.notifyDataSetChanged()
         })
 
@@ -230,13 +236,17 @@ class ProductActivity : AppCompatActivity()
                 fragment.setOrderEditorListener(this)
 
                 supportFragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
-                        .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
-                        .addToBackStack(null)
-                        .commit()
+                    .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+                    .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
+                    .addToBackStack(null)
+                    .commit()
             }
         } else {
-            Toast.makeText(this, "ไม่อยู่ในช่วงเวลาให้บริการ (${mViewModel.openTime}-${mViewModel.closeTime})", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "ไม่อยู่ในช่วงเวลาให้บริการ (${mViewModel.openTime}-${mViewModel.closeTime})",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

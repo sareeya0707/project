@@ -6,24 +6,28 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import android.widget.LinearLayout
 import com.csc48.deliverycoffeeshop.R
 import com.csc48.deliverycoffeeshop.adapter.OrdersAdapter
+import com.csc48.deliverycoffeeshop.ui.fragment.SenderConsoleDialogFragment
 import com.csc48.deliverycoffeeshop.utils.USER_ROLE_ADMIN
 import com.csc48.deliverycoffeeshop.utils.USER_ROLE_CUSTOMER
 import com.csc48.deliverycoffeeshop.utils.USER_ROLE_SENDER
 import com.csc48.deliverycoffeeshop.viewmodel.OrderManagementViewModel
 import com.csc48.deliverycoffeeshop.viewmodel.ViewModelFactory
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_main_admin.*
-import kotlinx.android.synthetic.main.activity_order_detail_customer.*
+import kotlinx.android.synthetic.main.activity_main_admin.rvOrders
+import kotlinx.android.synthetic.main.activity_order_detail_customer.btnBack
+import kotlinx.android.synthetic.main.activity_order_management.*
 import javax.inject.Inject
 
-class OrderManagementActivity : AppCompatActivity() {
+class OrderManagementActivity : AppCompatActivity(), SenderConsoleDialogFragment.ConsoleListener {
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
     private lateinit var mViewModel: OrderManagementViewModel
     private var adapter = OrdersAdapter()
+    //    private var userRole: Int = USER_ROLE_CUSTOMER
     private var uid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +46,9 @@ class OrderManagementActivity : AppCompatActivity() {
                         startActivity(intent)
                     }
                     USER_ROLE_SENDER -> {
-
+                        val intent = Intent(this@OrderManagementActivity, OrderDetailSenderActivity::class.java)
+                        intent.putExtra("ORDER_ID", id)
+                        startActivity(intent)
                     }
                     USER_ROLE_ADMIN -> {
                         val intent = Intent(this@OrderManagementActivity, OrderDetailAdminActivity::class.java)
@@ -59,6 +65,8 @@ class OrderManagementActivity : AppCompatActivity() {
                 uid = user.uid
                 adapter.userRole = user.role
                 adapter.notifyDataSetChanged()
+
+                btnSenderConsole.visibility = if (user.role == USER_ROLE_SENDER) View.VISIBLE else View.GONE
 
                 when (user.role) {
                     USER_ROLE_CUSTOMER -> mViewModel.getOrders(user.uid)
@@ -77,6 +85,14 @@ class OrderManagementActivity : AppCompatActivity() {
         btnBack.setOnClickListener {
             this.finish()
         }
+
+        btnSenderConsole.setOnClickListener {
+            if (supportFragmentManager.findFragmentByTag("SenderConsoleDialogFragment") == null) {
+                val dialog = SenderConsoleDialogFragment()
+                dialog.setConsoleListener(this)
+                dialog.show(supportFragmentManager, "SenderConsoleDialogFragment")
+            }
+        }
     }
 
     override fun onResume() {
@@ -87,5 +103,14 @@ class OrderManagementActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         mViewModel.removeListener(uid)
+    }
+
+    override fun onEditProfile() {
+        val intent = Intent(this, UserInfoActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onLogout() {
+        mViewModel.logout(this)
     }
 }

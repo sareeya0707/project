@@ -176,6 +176,7 @@ class MainViewModel @Inject constructor(private val appPreference: AppPreference
 
     private fun navigateToUserInfoActivity(activity: Activity) {
         val intent = Intent(activity, UserInfoActivity::class.java)
+        intent.putExtra("TO_REGISTER",true)
         activity.startActivity(intent)
     }
 }
