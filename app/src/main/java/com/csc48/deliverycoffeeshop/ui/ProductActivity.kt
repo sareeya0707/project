@@ -32,13 +32,13 @@ import java.util.*
 import javax.inject.Inject
 
 class ProductActivity : AppCompatActivity()
-        , HasSupportFragmentInjector
-        , AdminConsoleDialogFragment.ConsoleListener
-        , CustomerConsoleDialogFragment.ConsoleListener
-        , AddCartFragment.AddCartListener
-        , OrderCartDialogFragment.OrderCartListener
-        , OrderEditorFragment.OrderEditorListener
-        , ProductEditorDialogFragment.ProductEditorListener {
+    , HasSupportFragmentInjector
+    , AdminConsoleDialogFragment.ConsoleListener
+    , CustomerConsoleDialogFragment.ConsoleListener
+    , AddCartFragment.AddCartListener
+    , OrderCartDialogFragment.OrderCartListener
+    , OrderEditorFragment.OrderEditorListener
+    , ProductEditorDialogFragment.ProductEditorListener {
     private val TAG = ProductActivity::class.java.simpleName
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
@@ -94,18 +94,18 @@ class ProductActivity : AppCompatActivity()
 
                             override fun onDeleteProduct(productModel: ProductModel) {
                                 AlertDialog.Builder(this@ProductActivity)
-                                        .setTitle("ลบข้อมูล")
-                                        .setMessage("ต้องการลบสินค้าชิ้นนี้หรือไม่?")
-                                        .setPositiveButton("ลบ") { _, _ ->
-                                            val product = productModel.apply {
-                                                this.update_at = System.currentTimeMillis()
-                                                this.delete_at = System.currentTimeMillis()
-                                                this.available = false
-                                            }
-                                            mViewModel.updateProduct(product, null)
+                                    .setTitle("ลบข้อมูล")
+                                    .setMessage("ต้องการลบสินค้าชิ้นนี้หรือไม่?")
+                                    .setPositiveButton("ลบ") { _, _ ->
+                                        val product = productModel.apply {
+                                            this.update_at = System.currentTimeMillis()
+                                            this.delete_at = System.currentTimeMillis()
+                                            this.available = false
                                         }
-                                        .setNegativeButton("ยกเลิก", null)
-                                        .show()
+                                        mViewModel.updateProduct(product, null)
+                                    }
+                                    .setNegativeButton("ยกเลิก", null)
+                                    .show()
                             }
 
                             override fun onAvailableChange(productModel: ProductModel) {
@@ -141,7 +141,7 @@ class ProductActivity : AppCompatActivity()
         mViewModel.products.observe(this, Observer { products ->
             productData = products ?: listOf()
             adapter.mData =
-                    if (userRole != USER_ROLE_CUSTOMER) productData.filter { it.delete_at == null } else productData.filter { it.available || it.delete_at == null }
+                if (userRole != USER_ROLE_CUSTOMER) productData.filter { it.delete_at == null } else productData.filter { it.available && it.delete_at == null }
             adapter.notifyDataSetChanged()
         })
 
@@ -239,16 +239,16 @@ class ProductActivity : AppCompatActivity()
                 fragment.setOrderEditorListener(this)
 
                 supportFragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
-                        .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
-                        .addToBackStack(null)
-                        .commit()
+                    .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+                    .replace(android.R.id.content, fragment, OrderEditorFragment.TAG)
+                    .addToBackStack(null)
+                    .commit()
             }
         } else {
             Toast.makeText(
-                    this,
-                    "ไม่อยู่ในช่วงเวลาให้บริการ (${mViewModel.openTime}-${mViewModel.closeTime})",
-                    Toast.LENGTH_LONG
+                this,
+                "ไม่อยู่ในช่วงเวลาให้บริการ (${mViewModel.openTime}-${mViewModel.closeTime})",
+                Toast.LENGTH_LONG
             ).show()
         }
     }
@@ -300,13 +300,14 @@ class ProductActivity : AppCompatActivity()
             it?.also { response ->
                 when {
                     response.isSuccessful -> {
-                        val dialog = supportFragmentManager.findFragmentByTag(ProductEditorDialogFragment.TAG) as? ProductEditorDialogFragment
+                        val dialog =
+                            supportFragmentManager.findFragmentByTag(ProductEditorDialogFragment.TAG) as? ProductEditorDialogFragment
                         dialog?.dismiss()
                     }
                     response.isCanceled -> Toast.makeText(
-                            this@ProductActivity,
-                            "คำขอไม่สำเร็จ",
-                            Toast.LENGTH_SHORT
+                        this@ProductActivity,
+                        "คำขอไม่สำเร็จ",
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
             }
