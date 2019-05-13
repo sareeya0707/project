@@ -269,6 +269,10 @@ class ProductActivity : AppCompatActivity()
             calendarClose.set(Calendar.MINUTE, Integer.parseInt(close[1]))
             calendarClose.set(Calendar.SECOND, 0)
             calendarClose.set(Calendar.MILLISECOND, 0)
+            if (calendarOpen.timeInMillis >= calendarClose.timeInMillis) calendarClose.set(
+                Calendar.DAY_OF_MONTH,
+                calendarClose.get(Calendar.DAY_OF_MONTH) + 1
+            )
 
             calendarCurrent.timeInMillis in calendarOpen.timeInMillis..calendarClose.timeInMillis
         } else false
