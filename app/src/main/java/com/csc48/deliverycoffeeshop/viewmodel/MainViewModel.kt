@@ -5,8 +5,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Intent
 import android.util.Log
-import com.csc48.deliverycoffeeshop.di.AppPreference
-import com.csc48.deliverycoffeeshop.model.OpenTimeModel
 import com.csc48.deliverycoffeeshop.model.ProductModel
 import com.csc48.deliverycoffeeshop.model.StatisticModel
 import com.csc48.deliverycoffeeshop.model.UserModel
@@ -21,7 +19,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(private val appPreference: AppPreference) : ViewModel() {
+class MainViewModel @Inject constructor() : ViewModel() {
     private val TAG = MainViewModel::class.java.simpleName
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
@@ -139,31 +137,6 @@ class MainViewModel @Inject constructor(private val appPreference: AppPreference
         }
     }
 
-    private val openTimeListener = object : ValueEventListener {
-        override fun onCancelled(databaseError: DatabaseError) {
-            Log.d(TAG, "getOpenTime databaseError : $databaseError")
-        }
-
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            if (dataSnapshot.hasChildren()) {
-                val openTime = dataSnapshot.getValue(OpenTimeModel::class.java)
-                if (openTime != null) {
-                    appPreference.saveOpenTime(openTime.open)
-                    appPreference.saveCloseTime(openTime.close)
-                }
-            }
-        }
-    }
-
-    fun getOpenTime() {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val ref = database.reference.child("open-time")
-            ref.removeEventListener(openTimeListener)
-            ref.addListenerForSingleValueEvent(openTimeListener)
-        }
-    }
-
     private fun navigateToProductActivity(activity: Activity) {
         val intent = Intent(activity, ProductActivity::class.java)
         activity.startActivity(intent)
@@ -176,7 +149,7 @@ class MainViewModel @Inject constructor(private val appPreference: AppPreference
 
     private fun navigateToUserInfoActivity(activity: Activity) {
         val intent = Intent(activity, UserInfoActivity::class.java)
-        intent.putExtra("TO_REGISTER",true)
+        intent.putExtra("TO_REGISTER", true)
         activity.startActivity(intent)
     }
 }

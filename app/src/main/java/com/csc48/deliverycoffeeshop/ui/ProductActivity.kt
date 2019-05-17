@@ -51,18 +51,13 @@ class ProductActivity : AppCompatActivity()
     private var userModel: UserModel? = null
     private var userRole: Int = USER_ROLE_CUSTOMER
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
-        return dispatchingAndroidInjector
-    }
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> = dispatchingAndroidInjector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ProductViewModel::class.java)
         setContentView(R.layout.activity_product)
-
-        mViewModel.getOpenTime()
-        checkOpenTime()
 
         rvProducts.layoutManager = GridLayoutManager(this, 2, LinearLayout.VERTICAL, false)
         rvProducts.setHasFixedSize(true)
@@ -169,6 +164,7 @@ class ProductActivity : AppCompatActivity()
     override fun onResume() {
         super.onResume()
         mViewModel.getUser()
+        mViewModel.getOpenTime()
     }
 
     override fun onPause() {
@@ -259,6 +255,7 @@ class ProductActivity : AppCompatActivity()
         val calendarClose = Calendar.getInstance()
         val open = mViewModel.openTime.split(":".toRegex())
         val close = mViewModel.closeTime.split(":".toRegex())
+
         return if (open.size >= 2 && close.size >= 2) {
             calendarOpen.set(Calendar.HOUR_OF_DAY, Integer.parseInt(open[0]))
             calendarOpen.set(Calendar.MINUTE, Integer.parseInt(open[1]))

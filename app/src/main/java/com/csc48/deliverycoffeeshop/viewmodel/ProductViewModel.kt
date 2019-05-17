@@ -5,11 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Intent
 import android.util.Log
-import com.csc48.deliverycoffeeshop.di.AppPreference
-import com.csc48.deliverycoffeeshop.model.OrderModel
-import com.csc48.deliverycoffeeshop.model.ProductModel
-import com.csc48.deliverycoffeeshop.model.StatisticModel
-import com.csc48.deliverycoffeeshop.model.UserModel
+import com.csc48.deliverycoffeeshop.model.*
 import com.csc48.deliverycoffeeshop.ui.MainActivity
 import com.csc48.deliverycoffeeshop.utils.CLOSE_TIME
 import com.csc48.deliverycoffeeshop.utils.OPEN_TIME
@@ -22,7 +18,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
-class ProductViewModel @Inject constructor(private val appPreference: AppPreference) : ViewModel() {
+class ProductViewModel @Inject constructor() : ViewModel() {
     private val TAG = ProductViewModel::class.java.simpleName
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
@@ -55,9 +51,29 @@ class ProductViewModel @Inject constructor(private val appPreference: AppPrefere
         }
     }
 
+    private val openTimeListener = object : ValueEventListener {
+        override fun onCancelled(databaseError: DatabaseError) {
+            Log.d(TAG, "getOpenTime databaseError : $databaseError")
+        }
+
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            if (dataSnapshot.hasChildren()) {
+                val time = dataSnapshot.getValue(OpenTimeModel::class.java)
+                if (time != null) {
+                    openTime = time.open
+                    closeTime = time.close
+                }
+            }
+        }
+    }
+
     fun getOpenTime() {
-        openTime = appPreference.getOpenTime() ?: OPEN_TIME
-        closeTime = appPreference.getCloseTime() ?: CLOSE_TIME
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val ref = database.reference.child("open-time")
+            ref.removeEventListener(openTimeListener)
+            ref.addValueEventListener(openTimeListener)
+        }
     }
 
     private val productListener = object : ValueEventListener {
@@ -90,6 +106,9 @@ class ProductViewModel @Inject constructor(private val appPreference: AppPrefere
     fun removeListener() {
         var ref = database.reference.child("products")
         ref.removeEventListener(productListener)
+
+        ref = database.reference.child("open-time")
+        ref.removeEventListener(openTimeListener)
 
         val currentUser = auth.currentUser
         if (currentUser != null) {

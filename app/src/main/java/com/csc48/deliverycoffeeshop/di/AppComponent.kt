@@ -3,7 +3,6 @@ package com.csc48.deliverycoffeeshop.di
 import android.app.Application
 import com.csc48.deliverycoffeeshop.App
 import com.csc48.deliverycoffeeshop.di.module.ActivityModule
-import com.csc48.deliverycoffeeshop.di.module.AppModule
 import com.csc48.deliverycoffeeshop.di.module.ViewModelModule
 import dagger.BindsInstance
 import dagger.Component
@@ -15,7 +14,6 @@ import javax.inject.Singleton
     modules = [
         AndroidSupportInjectionModule::class,
         ActivityModule::class,
-        AppModule::class,
         ViewModelModule::class
     ]
 )

@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mViewModel.getProducts()
-        mViewModel.getOpenTime()
     }
 
     private fun userPermissionCheck() {
