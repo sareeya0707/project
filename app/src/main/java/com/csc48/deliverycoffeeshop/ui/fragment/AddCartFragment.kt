@@ -30,7 +30,7 @@ class AddCartFragment : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val product = arguments?.getParcelable<ProductModel>("PRODUCT")
         cartItem = ProductModel().apply {
-            key = product?.key
+            productID = product?.productID
             name = product?.name
             price = product?.price ?: 0.0
             image = product?.image
@@ -66,9 +66,7 @@ class AddCartFragment : DialogFragment() {
                 val productPrice = cartItem?.price ?: 0.0
                 val text = edtProductQuantity.text.toString()
                 var quantity = 0
-                if (!text.isBlank()) {
-                    quantity = Integer.parseInt(text)
-                }
+                if (!text.isBlank()) quantity = Integer.parseInt(text)
                 cartItem?.quantity = quantity
                 val netPrice = productPrice * quantity
                 tvNetPrice.text = netPrice.toString()

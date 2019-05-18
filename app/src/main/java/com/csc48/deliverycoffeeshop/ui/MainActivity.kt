@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         mViewModel.statistics.observe(this, Observer { statistics ->
             if (statistics != null) {
                 adapter.mData.forEach { s ->
-                    val hasData = statistics.find { it.key == s.key }
+                    val hasData = statistics.find { it.statisticID == s.productID }
                     if (hasData != null) s.quantity = hasData.quantity
                 }
                 adapter.mData = adapter.mData.sortedBy { it.quantity }.asReversed()

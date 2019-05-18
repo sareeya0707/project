@@ -103,7 +103,7 @@ class OrderDetailAdminActivity : AppCompatActivity(), OnMapReadyCallback {
             val phone = edtCustomerPhone.text.toString()
             if (!phone.isBlank()) {
                 val intent = Intent(Intent.ACTION_DIAL)
-                intent.data = Uri.parse(phone)
+                intent.data = Uri.parse("tel:$phone")
                 startActivity(intent)
             } else {
                 Toast.makeText(this, "ไม่มีหมายเลขโทรศัพท์", Toast.LENGTH_SHORT).show()
@@ -136,6 +136,7 @@ class OrderDetailAdminActivity : AppCompatActivity(), OnMapReadyCallback {
         val location = "${order.location_lat ?: ""}, ${order.location_lng ?: ""}"
         edtCustomerLocation.text = editable.newEditable(location)
         edtNetPrice.text = editable.newEditable(order.net_price.toString())
+        edtNote.text = editable.newEditable(order.shipping_note ?: "")
 
         targetLocation = if (order.location_lat != null && order.location_lng != null)
             LatLng(order.location_lat!!, order.location_lng!!) else null

@@ -44,7 +44,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
                 for (data in dataSnapshot.children) {
                     val product = data.getValue(ProductModel::class.java)
                     if (product != null && product.available) {
-                        product.key = data.key
+                        product.productID = data.key
                         list = list + product
                     }
                 }
@@ -76,10 +76,10 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
                 // group สินค้าและรวมจำนวนการสั่งซื้อของสินค้าแต่ละชิ้นจากข้อมูลสถิติที่ Get มาจาก Firebase ด้านบน
                 // **อันนี้พี่ก็ไม่ค่อยรู้วิธีการทำงานเท่าไหร่ บางส่วนเอามาจาก google
-                val sortedList = list.groupBy { it.key }.values.map { s ->
+                val sortedList = list.groupBy { it.statisticID }.values.map { s ->
                     s.reduce { acc, statisticModel ->
                         StatisticModel(
-                            statisticModel.key,
+                            statisticModel.statisticID,
                             acc.quantity + statisticModel.quantity
                         )
                     }

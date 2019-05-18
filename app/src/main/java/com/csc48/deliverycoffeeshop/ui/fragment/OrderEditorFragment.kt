@@ -95,10 +95,11 @@ class OrderEditorFragment : Fragment() {
     }
 
     private fun checkOrderInput() {
-        val uid = userModel?.uid
+        val uid = userModel?.userID
         val name = edtCustomerName.text.toString().trim()
         val phone = edtCustomerPhone.text.toString().trim()
         val address = edtCustomerAddress.text.toString().trim()
+        val note = edtNote.text.toString().trim()
 
         val isNameValid = checkField(name, layoutCustomerName, "กรุณากรอกชื่อผู้รับ")
         val isPhoneValid = checkField(phone, layoutCustomerPhone, "กรุณากรอกเบอร์ติดต่อ")
@@ -110,10 +111,11 @@ class OrderEditorFragment : Fragment() {
                     location_lat = currentLocation!!.latitude
                     location_lng = currentLocation!!.longitude
                 }
-                shipping_uid = uid
+                shipping_userID = uid
                 shipping_name = name
                 shipping_phone = phone
                 shipping_address = address
+                shipping_note = note
                 products = cart
                 net_price = cart.map { s -> s.price * (s.quantity ?: 0) }.sum()
                 create_at = System.currentTimeMillis()

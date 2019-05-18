@@ -4,7 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -82,6 +84,17 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
         btnBack.setOnClickListener {
             this.finish()
         }
+
+        btnCall.setOnClickListener {
+            val phone = edtCustomerPhone.text.toString()
+            if (!phone.isBlank()) {
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:$phone")
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "ไม่มีหมายเลขโทรศัพท์", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onResume() {
@@ -98,7 +111,7 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun initOrderDetail(order: OrderModel) {
 
         btnOrderSuccess.setOnClickListener {
-            if (order.key != null && order.status != ORDER_STATUS_SUCCESS) successOrderDialog(order)
+            if (order.orderID != null && order.status != ORDER_STATUS_SUCCESS) successOrderDialog(order)
             else {
                 Toast.makeText(this, "ไม่สามารถทำรายการได้", Toast.LENGTH_SHORT).show()
                 checkOrderStatusRadioButton(order)
@@ -106,7 +119,7 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         btnOrderCancel.setOnClickListener {
-            if (order.key != null && order.status == ORDER_STATUS_WAITING) cancelOrderDialog(order)
+            if (order.orderID != null && order.status == ORDER_STATUS_WAITING) cancelOrderDialog(order)
             else {
                 Toast.makeText(this, "ไม่สามารถยกเลิกรายการนี้ได้", Toast.LENGTH_SHORT).show()
                 checkOrderStatusRadioButton(order)
@@ -119,6 +132,7 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
         val location = "${order.location_lat ?: ""} ${order.location_lng ?: ""}"
         edtCustomerLocation.text = editable.newEditable(location)
         edtNetPrice.text = editable.newEditable(order.net_price.toString())
+        edtNote.text = editable.newEditable(order.shipping_note ?: "")
 
         adapter.mData = order.products ?: listOf()
         adapter.notifyDataSetChanged()
@@ -144,7 +158,7 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
         val builder = AlertDialog.Builder(this).apply {
             setMessage("ยืนยันการสำเร็จรายการนี้?")
             setPositiveButton("ยืนยัน") { dialog, _ ->
-                mViewModel.updateOrderStatus(this@OrderDetailSenderActivity, order.key, ORDER_STATUS_SUCCESS)
+                mViewModel.updateOrderStatus(this@OrderDetailSenderActivity, order.orderID, ORDER_STATUS_SUCCESS)
                 dialog.dismiss()
             }
             setNegativeButton("ยกเลิก") { dialog, _ ->
@@ -160,7 +174,7 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
         val builder = AlertDialog.Builder(this).apply {
             setMessage("ต้องการยกเลิกรายการนี้?")
             setPositiveButton("ยืนยัน") { dialog, _ ->
-                mViewModel.updateOrderStatus(this@OrderDetailSenderActivity, order.key, ORDER_STATUS_CANCEL)
+                mViewModel.updateOrderStatus(this@OrderDetailSenderActivity, order.orderID, ORDER_STATUS_CANCEL)
                 dialog.dismiss()
             }
             setNegativeButton("ยกเลิก") { dialog, _ ->

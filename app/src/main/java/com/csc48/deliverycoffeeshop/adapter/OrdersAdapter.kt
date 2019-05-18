@@ -49,7 +49,7 @@ class OrdersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         init {
             rootItem.setOnClickListener {
-                callback?.onSelectItem(mData[adapterPosition].key, userRole)
+                callback?.onSelectItem(mData[adapterPosition].orderID, userRole)
             }
         }
 

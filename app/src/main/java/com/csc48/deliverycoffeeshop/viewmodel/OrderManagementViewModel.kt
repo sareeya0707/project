@@ -53,12 +53,12 @@ class OrderManagementViewModel @Inject constructor() : ViewModel() {
                 for (data in dataSnapshot.children) {
                     val order = data.getValue(OrderModel::class.java)
                     if (order != null) {
-                        order.key = data.key
+                        order.orderID = data.key
                         list = list + order
                     }
                 }
 
-                orders.value = if (uid != null) list.filter { s -> s.shipping_uid == uid } else list
+                orders.value = if (uid != null) list.filter { s -> s.shipping_userID == uid } else list
             }
         }
     }

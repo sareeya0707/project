@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class StatisticModel(
-    var key: String? = null,
-    var quantity: Int = 0,
-    var create_at: Long = 0
+        var statisticID: String? = null,
+        var quantity: Int = 0,
+        var create_at: Long = 0
 ) : Parcelable

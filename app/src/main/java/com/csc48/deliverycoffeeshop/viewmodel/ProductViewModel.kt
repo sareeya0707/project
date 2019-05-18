@@ -87,7 +87,7 @@ class ProductViewModel @Inject constructor() : ViewModel() {
                 for (data in dataSnapshot.children) {
                     val product = data.getValue(ProductModel::class.java)
                     if (product != null) {
-                        product.key = data.key
+                        product.productID = data.key
                         list = list + product
                     }
                 }
@@ -124,16 +124,16 @@ class ProductViewModel @Inject constructor() : ViewModel() {
         // กำหนดที่ที่เราจะเพิ่มข้อมูล อันนี้คือชี้ไปที่ node products ใน database
         val ref = database.reference.child("products")
 
-        // key ของสินค้า มันจะมี2แบบก็คือ ถ้าmodelที่พี่ส่งมามันไม่มีkeyในนั้น แสดงว่าเป็นการสร้างสินค้าใหม่
-        // เพราะตอนกรอกข้อมูลสินค้าแล้วกดสร้างพี่เอาข้อมูลต่างๆมาจับยัดใส่model มันจะไม่มี key แล้วมันจะเข้า else คือการเจนkeyใหม่ขึ้นมา
+        // productID ของสินค้า มันจะมี2แบบก็คือ ถ้าmodelที่พี่ส่งมามันไม่มีkeyในนั้น แสดงว่าเป็นการสร้างสินค้าใหม่
+        // เพราะตอนกรอกข้อมูลสินค้าแล้วกดสร้างพี่เอาข้อมูลต่างๆมาจับยัดใส่model มันจะไม่มี productID แล้วมันจะเข้า else คือการเจนkeyใหม่ขึ้นมา
         // **พี่ใช้แบบนี้ในกรณีที่มีการแก้ไขข้อมูลสินค้า จะได้ใช้ฟังชั่นเดียวกันเลย เพราะถ้าแก้ไขสินค้า ก็คือมีสินค้านั้นอยู่แล้ว ก็จะมีkeyอยู่แล้ว ก็เข้า if ไป
 
-        val pid = if (productModel.key != null) productModel.key else ref.push().key
+        val pid = if (productModel.productID != null) productModel.productID else ref.push().key
         if (pid != null) {
-            // set key ให้สินค้านั้น ถ้ามันมีคีย์อยู่แล้วก็เท่ากับว่าset keyเดิม ถ้าสินค้าใหม่ก็เท่ากับเอามาจาก else ด้านบน
-            productModel.key = pid
+            // set productID ให้สินค้านั้น ถ้ามันมีคีย์อยู่แล้วก็เท่ากับว่าset keyเดิม ถ้าสินค้าใหม่ก็เท่ากับเอามาจาก else ด้านบน
+            productModel.productID = pid
 
-            // ตรงนี้เป็นการเพิ่มข้อมูล (setValue) เข้าไปใน node products -> key ของสินค้า (ดูจาก child)
+            // ตรงนี้เป็นการเพิ่มข้อมูล (setValue) เข้าไปใน node products -> productID ของสินค้า (ดูจาก child)
             // addOnCompleteListener นี่พี่อยากติดตาม response มันกลับมาเฉยๆ
             ref.child(pid).setValue(productModel).addOnCompleteListener { task ->
                 // ถ้ามันสำเร็จ และ มีรูปภาพ พี่จะให้มันไปอัพโหลดรูปภาพลง storage
@@ -168,9 +168,9 @@ class ProductViewModel @Inject constructor() : ViewModel() {
     fun updateOrder(orderModel: OrderModel) {
         updateOrderResponse.value = null
         val ref = database.reference.child("orders")
-        val pid = if (orderModel.key != null) orderModel.key else ref.push().key
+        val pid = if (orderModel.orderID != null) orderModel.orderID else ref.push().key
         if (pid != null) {
-            orderModel.key = pid
+            orderModel.orderID = pid
             updateStatic(orderModel)
             ref.child(pid).setValue(orderModel).addOnCompleteListener { task ->
                 updateOrderResponse.value = task
@@ -179,11 +179,11 @@ class ProductViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun updateStatic(orderModel: OrderModel) {
-        if (orderModel.key != null) {
-            val ref = database.reference.child("product-statistic").child(orderModel.key!!)
+        if (orderModel.orderID != null) {
+            val ref = database.reference.child("product-statistic").child(orderModel.orderID!!)
             val statics = orderModel.products?.map { s ->
                 StatisticModel().apply {
-                    key = s.key
+                    statisticID = s.productID
                     quantity = s.quantity ?: 0
                     create_at = orderModel.create_at
                 }

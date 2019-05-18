@@ -27,7 +27,7 @@ class UserManagementViewModel @Inject constructor() : ViewModel() {
                 for (data in dataSnapshot.children) {
                     val user = data.getValue(UserModel::class.java)
                     if (user != null) {
-                        user.uid = data.key
+                        user.userID = data.key
                         list = list + user
                     }
                 }
@@ -44,7 +44,7 @@ class UserManagementViewModel @Inject constructor() : ViewModel() {
 
     fun updateUser(userModel: UserModel) {
         val ref = database.reference.child("users")
-        if (userModel.uid != null) ref.child(userModel.uid!!).setValue(userModel).addOnCompleteListener {
+        if (userModel.userID != null) ref.child(userModel.userID!!).setValue(userModel).addOnCompleteListener {
             getUsers()
         }
     }

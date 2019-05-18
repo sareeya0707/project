@@ -42,6 +42,7 @@
             android:background="@drawable/input_field_background"
             android:drawablePadding="8dp"
             android:inputType="number"
+            android:maxLength="2"
             android:maxLines="1" />
 
     </android.support.design.widget.TextInputLayout>

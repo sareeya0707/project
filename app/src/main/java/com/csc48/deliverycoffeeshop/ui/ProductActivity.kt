@@ -212,7 +212,7 @@ class ProductActivity : AppCompatActivity()
     }
 
     override fun onAddCart(productModel: ProductModel) {
-        val hasData = cart.find { it.key == productModel.key }
+        val hasData = cart.find { it.productID == productModel.productID }
         if (hasData == null) cart = cart + productModel
         else {
             cart = cart - hasData

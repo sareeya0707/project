@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import com.csc48.deliverycoffeeshop.R
@@ -23,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_order_management.*
 import javax.inject.Inject
 
 class OrderManagementActivity : AppCompatActivity(), SenderConsoleDialogFragment.ConsoleListener {
+    private val mTAG = OrderManagementActivity::class.java.simpleName
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
     private lateinit var mViewModel: OrderManagementViewModel
@@ -62,14 +64,14 @@ class OrderManagementActivity : AppCompatActivity(), SenderConsoleDialogFragment
 
         mViewModel.user.observe(this, Observer { user ->
             if (user != null) {
-                uid = user.uid
+                uid = user.userID
                 adapter.userRole = user.role
                 adapter.notifyDataSetChanged()
 
                 btnSenderConsole.visibility = if (user.role == USER_ROLE_SENDER) View.VISIBLE else View.GONE
 
                 when (user.role) {
-                    USER_ROLE_CUSTOMER -> mViewModel.getOrders(user.uid)
+                    USER_ROLE_CUSTOMER -> mViewModel.getOrders(user.userID)
                     else -> mViewModel.getOrders(null)
                 }
             }
@@ -77,6 +79,7 @@ class OrderManagementActivity : AppCompatActivity(), SenderConsoleDialogFragment
 
         mViewModel.orders.observe(this, Observer { orders ->
             if (orders != null) {
+                Log.d(mTAG, "orders: $orders")
                 adapter.mData = orders
                 adapter.notifyDataSetChanged()
             }

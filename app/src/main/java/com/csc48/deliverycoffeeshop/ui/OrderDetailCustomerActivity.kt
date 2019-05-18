@@ -68,7 +68,7 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
 
     private fun initOrderDetail(order: OrderModel) {
         btnCancelOrder.setOnClickListener {
-            if (order.key != null && order.status == ORDER_STATUS_WAITING) cancelOrderDialog(order.key!!)
+            if (order.orderID != null && order.status == ORDER_STATUS_WAITING) cancelOrderDialog(order.orderID!!)
             else Toast.makeText(this, "ไม่สามารถยกเลิกรายการนี้ได้", Toast.LENGTH_SHORT).show()
         }
 
@@ -78,6 +78,7 @@ class OrderDetailCustomerActivity : AppCompatActivity() {
         val location = "${order.location_lat ?: ""} ${order.location_lng ?: ""}"
         edtCustomerLocation.text = editable.newEditable(location)
         edtNetPrice.text = editable.newEditable(order.net_price.toString())
+        edtNote.text = editable.newEditable(order.shipping_note ?: "")
 
         adapter.mData = order.products ?: listOf()
         adapter.notifyDataSetChanged()

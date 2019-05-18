@@ -84,7 +84,7 @@ class UsersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun bindViews(userModel: UserModel) {
             val name = "${userModel.first_name ?: ""} ${userModel.last_name ?: ""}"
             tvName.text = name
-            tvUid.text = userModel.uid
+            tvUid.text = userModel.userID
             tvPhone.text = userModel.phone_number
 
             btnUserRole.text = when (userModel.role) {

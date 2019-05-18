@@ -397,6 +397,46 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <TextView
+                    android:id="@+id/tvNote"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:text="หมายเหตุ"
+                    android:textColor="@android:color/black"
+                    android:textSize="20dp" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/layoutNote"
+                    style="@style/Widget.TextInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:focusableInTouchMode="true"
+                    app:errorEnabled="true">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/edtNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/input_field_background"
+                        android:drawablePadding="8dp"
+                        android:focusable="false"
+                        android:gravity="start"
+                        android:inputType="text"
+                        android:maxLines="2" />
+
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

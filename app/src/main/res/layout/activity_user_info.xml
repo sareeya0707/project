@@ -104,6 +104,7 @@
                     android:background="@drawable/input_field_background"
                     android:drawablePadding="8dp"
                     android:inputType="phone"
+                    android:maxLength="12"
                     android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
