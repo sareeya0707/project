@@ -100,12 +100,15 @@ class OrderEditorFragment : Fragment() {
         val phone = edtCustomerPhone.text.toString().trim()
         val address = edtCustomerAddress.text.toString().trim()
         val note = edtNote.text.toString().trim()
+        val location = edtCustomerLocation.text.toString().trim()
+
 
         val isNameValid = checkField(name, layoutCustomerName, "กรุณากรอกชื่อผู้รับ")
         val isPhoneValid = checkField(phone, layoutCustomerPhone, "กรุณากรอกเบอร์ติดต่อ")
         val isAddressValid = checkField(address, layoutCustomerAddress, "กรุณากรอกที่อยู่จัดส่ง")
+        val isLocationValid = checkField(location, layoutCustomerLocation, "กรุณาระบุตำแหน่ง")
 
-        if (isNameValid && isAddressValid && isPhoneValid && uid != null) {
+        if (isNameValid && isAddressValid && isPhoneValid && uid != null && isLocationValid) {
             val orderModel = OrderModel().apply {
                 if (currentLocation != null) {
                     location_lat = currentLocation!!.latitude

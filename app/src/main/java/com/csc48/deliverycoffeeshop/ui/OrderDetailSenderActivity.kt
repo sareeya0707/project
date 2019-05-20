@@ -118,13 +118,13 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        btnOrderCancel.setOnClickListener {
+     /*   btnOrderCancel.setOnClickListener {
             if (order.orderID != null && order.status == ORDER_STATUS_WAITING) cancelOrderDialog(order)
             else {
                 Toast.makeText(this, "ไม่สามารถยกเลิกรายการนี้ได้", Toast.LENGTH_SHORT).show()
                 checkOrderStatusRadioButton(order)
             }
-        }
+        } */
 
         edtCustomerName.text = editable.newEditable(order.shipping_name ?: "")
         edtCustomerPhone.text = editable.newEditable(order.shipping_phone ?: "")
@@ -148,7 +148,7 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun checkOrderStatusRadioButton(order: OrderModel) {
         when (order.status) {
-            ORDER_STATUS_CANCEL -> btnOrderCancel.isChecked = true
+         //   ORDER_STATUS_CANCEL -> btnOrderCancel.isChecked = true
             ORDER_STATUS_SUCCESS -> btnOrderSuccess.isChecked = true
             else -> groupStatus.clearCheck()
         }
@@ -169,7 +169,7 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
         builder.show()
     }
 
-    private fun cancelOrderDialog(order: OrderModel) {
+    /*private fun cancelOrderDialog(order: OrderModel) {
 
         val builder = AlertDialog.Builder(this).apply {
             setMessage("ต้องการยกเลิกรายการนี้?")
@@ -183,7 +183,7 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         builder.show()
-    }
+    } */
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -265,3 +265,4 @@ class OrderDetailSenderActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 }
+
