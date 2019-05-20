@@ -176,11 +176,11 @@
                         android:textColor="@android:color/black"
                         android:textSize="20dp" />
 
-                    <TextView
+                   <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:text="*ไม่บังคับ"
+                        android:text="*บังคับ"
                         android:textColor="@android:color/holo_red_light"
                         android:textSize="12dp" />
 
@@ -343,6 +343,8 @@
                         android:maxLines="2" />
 
                 </android.support.design.widget.TextInputLayout>
+
+
             </LinearLayout>
 
             <Button
